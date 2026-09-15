@@ -3,9 +3,9 @@ import { animateElement } from './motion.js';
 
 /** Displays live progress without owning goal rules or changing session state. */
 export class HudView {
-  /** Binds the HUD to the page and board accessibility state.
-   * @param {Document} root - Page root.
-   * @param {HTMLElement} board - Board grid.
+  /** Связывает HUD со страницей и состоянием доступности игрового поля.
+   * @param {Document} root - Параметр операции.
+   * @param {HTMLElement} board - Параметр операции.
    */
   constructor(root, board) {
     this.root = root;
@@ -14,8 +14,8 @@ export class HudView {
   }
 
   /** Updates counters and preserves badge nodes so only changed goals pulse.
-   * @param {import('../core/Game.js').Game} game - Session to display.
-   * @returns {void}
+   * @param {import('../core/Game.js').Game} game - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   hud(game) {
     const container = this.root.querySelector('#goals');
@@ -34,12 +34,12 @@ export class HudView {
     this.board.setAttribute('aria-busy', String(game.busy));
   }
 
-  /** Renders the collected/required count, completion mark and progress track for one goal.
-   * @param {HTMLElement} container - Goal list.
-   * @param {number} index - Goal display index.
-   * @param {import('../types.js').GoalConfig} goal - Required count and key.
-   * @param {import('../core/Game.js').Game} game - Source of remaining counts.
-   * @returns {void}
+  /** Отображает собранное и требуемое количество, отметку выполнения и прогресс одной цели.
+   * @param {HTMLElement} container - Параметр операции.
+   * @param {number} index - Параметр операции.
+   * @param {import('../types.js').GoalConfig} goal - Параметр операции.
+   * @param {import('../core/Game.js').Game} game - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   updateGoal(container, index, goal, game) {
     let badge = container.children[index];

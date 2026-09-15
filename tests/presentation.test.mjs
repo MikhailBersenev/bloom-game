@@ -5,17 +5,17 @@ import { animateElement } from '../src/ui/motion.js';
 
 globalThis.matchMedia = () => ({ matches: false });
 
-/** Creates a controllable Web Animations target for sequencing assertions.
- * @returns {Object} Fake visual with a manually completed animation.
+/** Создаёт управляемую цель Web Animations для проверки порядка событий.
+ * @returns Результат выполнения операции.
  */
 function visual() {
   return {
     style: {},
     calls: [],
-    /** Records keyframes and holds completion until the test releases it.
-     * @param {Keyframe[]} frames - Presentation frames.
-     * @param {Object} options - Duration and easing.
-     * @returns {Object} Controllable animation.
+    /** Записывает ключевые кадры и удерживает завершение до разрешения тестом.
+     * @param {Keyframe[]} frames - Параметр операции.
+     * @param {Object} options - Параметр операции.
+     * @returns Результат выполнения операции.
      */
     animate(frames, options) {
       let finish;
@@ -28,8 +28,8 @@ function visual() {
   };
 }
 
-/** Lets the current chain of awaited presentation promises advance.
- * @returns {Promise<void>}
+/** Даёт текущей цепочке ожидающих обещаний отображения продвинуться.
+ * @returns Результат выполнения операции.
  */
 async function flush() {
   for (let step = 0; step < 12; step++) await Promise.resolve();
@@ -159,9 +159,9 @@ test('board rendering uses only transform positions so gravity cannot double the
 
 test('results automatically advance or retry, and an early button press cannot transition twice', async () => {
   const { GameController } = await import('../src/ui/controller.js');
-  /** Creates the minimal result-dialog session without a browser dependency.
-   * @param {'won'|'lost'} status - Completed outcome.
-   * @returns {Object} Controller target and recorded transitions.
+  /** Создаёт минимальную сессию диалога результата без зависимости от браузера.
+   * @param {'won'|'lost'} status - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   function session(status) {
     const content = {},

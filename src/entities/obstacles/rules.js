@@ -49,10 +49,10 @@ export const elementRules = new Map([
   ],
 ]);
 /**
- * Registers or replaces an obstacle damage policy and optional end-of-turn behavior.
- * @param {string} type - Element or event subtype.
- * @param {Object} rule - Obstacle policy or instruction text.
- * @returns {void} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {string} type - Параметр операции.
+ * @param {Object} rule - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function registerElement(type, rule) {
   elementRules.set(type, rule);

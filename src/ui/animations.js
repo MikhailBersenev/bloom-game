@@ -2,15 +2,15 @@ import { icon, boosterNames } from './presentation.js';
 import { animateElement, motionDuration, tileTransform } from './motion.js';
 
 /** Waits for a presentation pause while respecting reduced motion.
- * @param {number} milliseconds - Requested duration.
- * @param {boolean} [isMotion=true] - Whether reduced motion shortens this interval.
- * @returns {Promise<void>} Resolves after the presentation interval.
+ * @param {number} milliseconds - Параметр операции.
+ * @param {boolean} [isMotion=true] - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function pause(milliseconds, isMotion = true) {
   return new Promise(
     /** Schedules the centralized presentation delay.
-     * @param {function(): void} resolve - Completes the delay.
-     * @returns {void}
+     * @param {function(): void} resolve - Параметр операции.
+     * @returns Результат выполнения операции.
      */ (resolve) => {
       setTimeout(resolve, isMotion ? motionDuration(milliseconds) : milliseconds);
     },
@@ -19,9 +19,9 @@ export function pause(milliseconds, isMotion = true) {
 
 /** Сохраняет порядок визуальных фаз: обмен, эффекты, удаление, падение и появление новых фишек. */
 export class GameAnimations {
-  /** Creates the event-to-animation adapter.
-   * @param {import('./view.js').GameView} view - Board and HUD renderer.
-   * @param {import('./audio.js').GameAudio} audio - Optional sound adapter.
+  /** Создаёт адаптер, преобразующий события в анимации.
+   * @param {import('./view.js').GameView} view - Параметр операции.
+   * @param {import('./audio.js').GameAudio} audio - Параметр операции.
    */
   constructor(view, audio) {
     this.view = view;
@@ -29,11 +29,11 @@ export class GameAnimations {
     this.revealPositions = [];
   }
 
-  /** Dispatches a domain snapshot and awaits all visuals belonging to it.
-   * @param {Object} event - Engine event and immutable presentation metadata.
-   * @param {import('../core/Game.js').Game} game - Current session.
-   * @param {function(): boolean} isCurrent - Session ownership guard.
-   * @returns {Promise<void>}
+  /** Обрабатывает снимок доменного события и ожидает завершения всей визуализации.
+   * @param {Object} event - Параметр операции.
+   * @param {import('../core/Game.js').Game} game - Параметр операции.
+   * @param {function(): boolean} isCurrent - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async play(event, game, isCurrent) {
     if (!isCurrent()) return;
@@ -49,9 +49,9 @@ export class GameAnimations {
   }
 
   /** Animates tile relocation using their previous and next board coordinates.
-   * @param {Object} event - Swap, invalid-swap or shuffle snapshot.
-   * @param {import('../core/Game.js').Game} game - Board dimensions.
-   * @returns {Promise<void>}
+   * @param {Object} event - Параметр операции.
+   * @param {import('../core/Game.js').Game} game - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async reposition(event, game) {
     const previous = new Map();
@@ -92,10 +92,10 @@ export class GameAnimations {
   }
 
   /** Эффекты бустеров идут по очереди до удаления; движок ждёт завершения всей последовательности.
-   * @param {Object} event - Removal sets, damage sets and ordered effects.
-   * @param {import('../core/Game.js').Game} game - Board dimensions.
-   * @param {function(): boolean} isCurrent - Session ownership guard.
-   * @returns {Promise<void>}
+   * @param {Object} event - Параметр операции.
+   * @param {import('../core/Game.js').Game} game - Параметр операции.
+   * @param {function(): boolean} isCurrent - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async remove(event, game, isCurrent) {
     this.view.draw(game, null, event.board);
@@ -134,8 +134,8 @@ export class GameAnimations {
   }
 
   /** После анимации старая фишка остаётся скрытой до удаления её клетки движком.
-   * @param {HTMLElement} art - Piece artwork container.
-   * @returns {Promise<void>}
+   * @param {HTMLElement} art - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async destroy(art) {
     if (!art) return;
@@ -152,10 +152,10 @@ export class GameAnimations {
   }
 
   /** Раскрывает содержимое, завершает падение выживших, затем запускает появление новых фишек в секциях.
-   * @param {Object} event - Final cells and movement trajectories.
-   * @param {import('../core/Game.js').Game} game - Board dimensions.
-   * @param {function(): boolean} isCurrent - Session ownership guard.
-   * @returns {Promise<void>}
+   * @param {Object} event - Параметр операции.
+   * @param {import('../core/Game.js').Game} game - Параметр операции.
+   * @param {function(): boolean} isCurrent - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async fall(event, game, isCurrent) {
     this.view.draw(game, null, event.board);
@@ -173,9 +173,9 @@ export class GameAnimations {
     for (const index of this.revealPositions) {
       const [row, col] = game.rc(index);
       const contained = survivors.find(
-        /** Finds a revealed movable piece at its source cell.
-         * @param {{move: Object}} entry - Survivor trajectory.
-         * @returns {boolean}
+        /** Находит раскрытую подвижную фишку в исходной клетке.
+         * @param {{move: Object}} entry - Параметр операции.
+         * @returns Результат выполнения операции.
          */ (entry) => entry.move.from === row && entry.move.col === col,
       );
       const tile = contained?.tile ?? this.view.board.querySelector(`[data-index="${index}"]`);
@@ -199,10 +199,10 @@ export class GameAnimations {
     await this.dropPieces(spawned, 320);
   }
 
-  /** Runs one fall phase with a small landing bounce and no layout-dependent animation loop.
-   * @param {Array<{tile: HTMLElement, move: Object}>} entries - Tiles and their row trajectories.
-   * @param {number} duration - Phase duration.
-   * @returns {Promise<void>}
+  /** Запускает одну фазу падения с лёгким отскоком без зависимости от layout.
+   * @param {Array<{tile: HTMLElement, move: Object}>} entries - Параметр операции.
+   * @param {number} duration - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async dropPieces(entries, duration) {
     const animations = [];
@@ -210,8 +210,8 @@ export class GameAnimations {
       tile.style.visibility = '';
       tile.style.transform = tileTransform(move.to, move.col);
       if (move.from === move.to) continue;
-      // Обрезка движется вместе с фишкой: видна лишь часть ниже входа в секцию.
-      // Значения свыше 100% сохраняют полное скрытие до пересечения границы.
+      // Описание совместимости и назначения модуля.
+      // Описание совместимости и назначения модуля.
       const frame = (row, offset) => ({
         transform: tileTransform(row, move.col),
         offset,
@@ -238,18 +238,18 @@ export class GameAnimations {
   }
 
   /** Порядок эффектов задаёт движок, включая комбинации и цепные активации.
-   * @param {import('../types.js').BoosterEffect} effect - Effect metadata.
-   * @param {import('../core/Game.js').Game} game - Board geometry.
-   * @returns {Promise<void>}
+   * @param {import('../types.js').BoosterEffect} effect - Параметр операции.
+   * @param {import('../core/Game.js').Game} game - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async playEffect(effect, game) {
     if (effect.type === 'combo') {
       const names = effect.label
         .split('+')
         .map(
-          /** Names the members of a booster pair.
-           * @param {string} type - Booster type.
-           * @returns {string}
+          /** Формирует названия двух бустеров в комбинации.
+           * @param {string} type - Параметр операции.
+           * @returns Результат выполнения операции.
            */ (type) => boosterNames[type],
         )
         .join(' + ');
@@ -284,10 +284,10 @@ export class GameAnimations {
   }
 
   /** Flies a plane to the engine-selected target and awaits the impact ring.
-   * @param {HTMLElement} element - Flight visual.
-   * @param {import('../types.js').BoosterEffect} effect - Source and target indices.
-   * @param {import('../core/Game.js').Game} game - Board dimensions.
-   * @returns {Promise<void>}
+   * @param {HTMLElement} element - Параметр операции.
+   * @param {import('../types.js').BoosterEffect} effect - Параметр операции.
+   * @param {import('../core/Game.js').Game} game - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async fly(element, effect, game) {
     element.innerHTML = icon({ kind: 'booster', type: 'plane' });

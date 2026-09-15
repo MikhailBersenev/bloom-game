@@ -1,2 +1,2 @@
-// Compatibility entry point.
+// Совместимая точка входа.
 export * from '../entities/Piece.js';

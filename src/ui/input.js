@@ -2,10 +2,10 @@ const MIN_DRAG_DISTANCE = 15;
 const CLICK_SUPPRESSION_MS = 100;
 
 /**
- * Binds pointer and keyboard input, suppressing the synthetic click after a drag.
- * @param {HTMLElement} board - Interactive board element.
- * @param {{getGame: function(): import("../core/Game.js").Game, choose: function(number): *, swap: function(number, number): *}} options - Input command handlers.
- * @returns {void} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {HTMLElement} board - Параметр операции.
+ * @param {{getGame: function(): import("../core/Game.js").Game, choose: function(number): *, swap: function(number, number): *}} options - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function bindBoardInput(board, { getGame, choose, swap }) {
   let pointer = null;
@@ -14,9 +14,9 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   board.addEventListener(
     'pointerdown',
     /**
-     * Records an idle board gesture origin.
-     * @param {Object} event - Event being handled.
-     * @returns {void} Completes the callback side effects.
+     * Описание операции или проверяемого поведения.
+     * @param {Object} event - Параметр операции.
+     * @returns Результат выполнения операции.
      */ (event) => {
       const tile = event.target.closest('.tile');
       if (!tile || getGame().busy) return;
@@ -27,9 +27,9 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   window.addEventListener(
     'pointerup',
     /**
-     * Resolves a completed drag to an adjacent cell and suppresses its synthetic click.
-     * @param {Object} event - Event being handled.
-     * @returns {void} Completes the callback side effects.
+     * Описание операции или проверяемого поведения.
+     * @param {Object} event - Параметр операции.
+     * @returns Результат выполнения операции.
      */ (event) => {
       if (!pointer) return;
       const origin = pointer;
@@ -41,8 +41,8 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
       suppressClick = true;
       setTimeout(
         /**
-         * Re-enables click selection after the drag suppression window.
-         * @returns {void} Completes the callback side effects.
+         * Описание операции или проверяемого поведения.
+         * @returns Результат выполнения операции.
          */ () => {
           suppressClick = false;
         },
@@ -61,8 +61,8 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   board.addEventListener(
     'pointercancel',
     /**
-     * Discards a cancelled pointer gesture.
-     * @returns {void} Completes the callback side effects.
+     * Описание операции или проверяемого поведения.
+     * @returns Результат выполнения операции.
      */ () => {
       pointer = null;
     },
@@ -70,9 +70,9 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   board.addEventListener(
     'click',
     /**
-     * Forwards a tile click unless it belongs to a completed drag.
-     * @param {Object} event - Event being handled.
-     * @returns {void} Completes the callback side effects.
+     * Описание операции или проверяемого поведения.
+     * @param {Object} event - Параметр операции.
+     * @returns Результат выполнения операции.
      */ (event) => {
       if (suppressClick) return;
       const tile = event.target.closest('.tile');
@@ -83,9 +83,9 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   board.addEventListener(
     'keydown',
     /**
-     * Moves keyboard focus to the arrow-selected neighboring tile.
-     * @param {Object} event - Event being handled.
-     * @returns {void} Completes the callback side effects.
+     * Описание операции или проверяемого поведения.
+     * @param {Object} event - Параметр операции.
+     * @returns Результат выполнения операции.
      */ (event) => {
       const tile = event.target.closest('.tile');
       if (!tile) return;

@@ -12,11 +12,11 @@ const boxNames = {
   cycling: 'Меняющий цвет ящик',
   blocker: 'Каменный блокер',
 };
-// Textures are standalone SVG files, shared by the board, goals and effects.
+// Описание совместимости и назначения модуля.
 /**
- * Returns decorative SVG image markup for an element, or an empty string for unsupported types.
- * @param {import("../types.js").Cell} item - Current element.
- * @returns {string} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../types.js").Cell} item - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function icon(item) {
   if (!item) return '';
@@ -33,9 +33,9 @@ export function icon(item) {
   return `<img class="texture" src="/src/textures/${name}.svg" alt="" aria-hidden="true" draggable="false" width="80" height="80">`;
 }
 /**
- * Returns an accessible Russian description including obstacle durability and nested contents.
- * @param {import("../types.js").Cell} item - Current element.
- * @returns {string} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../types.js").Cell} item - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function itemLabel(item) {
   if (item.kind === 'gem') return gemNames[item.color];
@@ -45,9 +45,9 @@ export function itemLabel(item) {
   return `${boxNames[item.type] || item.type}${color}, прочность ${item.hp}${contents}`;
 }
 /**
- * Builds the display-only element representing a goal key.
- * @param {string} key - Collection key supported by the element.
- * @returns {Object} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {string} key - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function goalItem(key) {
   if (key.startsWith('color:')) return { kind: 'gem', color: +key.split(':')[1] };
@@ -56,9 +56,9 @@ export function goalItem(key) {
   return { kind: 'booster', type: key.split(':')[1] || 'line' };
 }
 
-/** Describes a goal category without inventing a required box color or durability.
- * @param {string} key - Collection key from the level configuration.
- * @returns {string} Accessible category label.
+/** Описывает категорию цели, не выдумывая обязательный цвет или прочность ящика.
+ * @param {string} key - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function goalLabel(key) {
   if (key.startsWith('color:')) return gemNames[Number(key.split(':')[1])];

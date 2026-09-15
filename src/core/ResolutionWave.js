@@ -16,15 +16,15 @@ const GEM_SCORE = 50;
 const BOX_SCORE = 100;
 
 /**
- * Одна волна удаления включает все бустеры её цепной реакции.
- * Урон накапливается до изменения поля: ящик теряет не больше одной жизни,
- * а раскрытое содержимое защищено от повторного попадания до следующей волны.
+ * Описание операции или проверяемого поведения.
+ * Описание операции или проверяемого поведения.
+ * Описание операции или проверяемого поведения.
  */
 export class ResolutionWave {
   /**
-   * Initializes owned state and injected dependencies.
-   * @param {import("../core/Game.js").Game} game - Current game session.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../core/Game.js").Game} game - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   constructor(game) {
     this.game = game;
@@ -39,11 +39,11 @@ export class ResolutionWave {
   }
 
   /**
-   * Попадания накапливаются в одной волне; задетые бустеры добавляются в очередь.
-   * @param {number} index - Row-major cell position.
-   * @param {boolean} [direct] - Whether the hit comes from a booster.
-   * @param {number|null} [color] - Palette index, or null to select automatically.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} index - Параметр операции.
+   * @param {boolean} [direct] - Параметр операции.
+   * @param {number|null} [color] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   hit(index, direct = false, color = null) {
     if (index < 0 || index >= this.game.board.length) return;
@@ -59,18 +59,18 @@ export class ResolutionWave {
   }
 
   /**
-   * Marks each affected position as direct booster damage.
-   * @param {Iterable<number>} indices - Positions to compare.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {Iterable<number>} indices - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   hitAll(indices) {
     for (const index of indices) this.hit(index, true);
   }
 
   /**
-   * Цвета матчей определяют урон; при создании бустера приоритет у переставленных клеток.
-   * @param {import("../types.js").Match[]} groups - Connected matches.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").Match[]} groups - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   addMatches(groups) {
     for (const group of groups) {
@@ -79,9 +79,9 @@ export class ResolutionWave {
       const position =
         this.game.preferred?.find(
           /**
-           * Selects the preferred swapped cell that belongs to this match.
-           * @param {number} index - Row-major cell position.
-           * @returns {boolean} Callback result used by the enclosing operation.
+           * Описание операции или проверяемого поведения.
+           * @param {number} index - Параметр операции.
+           * @returns Результат выполнения операции.
            */ (index) => group.cells.includes(index),
         ) ?? group.cells[Math.floor(group.cells.length / 2)];
       this.creations.set(position, booster(group.type, group.axis));
@@ -89,12 +89,12 @@ export class ResolutionWave {
   }
 
   /**
-   * Describes the booster effect and queues its affected positions for the current wave.
-   * @param {number} index - Row-major cell position.
-   * @param {string} type - Element or event subtype.
-   * @param {string} [axis] - Effect direction.
-   * @param {number|null} [color] - Palette index, or null to select automatically.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} index - Параметр операции.
+   * @param {string} type - Параметр операции.
+   * @param {string} [axis] - Параметр операции.
+   * @param {number|null} [color] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   trigger(index, type, axis = 'h', color = null) {
     const handler = boosterEffects.get(type);
@@ -108,9 +108,9 @@ export class ResolutionWave {
   }
 
   /**
-   * Активация засчитывается одновременно в общую цель бустеров и цель своего типа.
-   * @param {import("../types.js").Cell} item - Current element.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").Cell} item - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   collectBooster(item) {
     this.game.collect('booster');
@@ -118,10 +118,10 @@ export class ResolutionWave {
   }
 
   /**
-   * Сохраняет исходный цвет до замены: сбор произойдёт после анимации удаления,
-   * а созданный бустер попадёт в общую очередь и активируется один раз.
-   * @param {number} index - Позиция исходной фишки.
-   * @param {import('../types.js').Piece} replacement - Создаваемый бустер.
+   * Описание операции или проверяемого поведения.
+   * Описание операции или проверяемого поведения.
+   * @param {number} index - Параметр операции.
+   * @param {import('../types.js').Piece} replacement - Параметр операции.
    */
   transformGem(index, replacement) {
     const item = this.game.board[index];
@@ -132,8 +132,8 @@ export class ResolutionWave {
   }
 
   /**
-   * Бустеры активируются в порядке очереди, каждая клетка — не более одного раза за волну.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   activateChain() {
     while (this.queue.length) {
@@ -149,17 +149,17 @@ export class ResolutionWave {
   }
 
   /**
-   * Объединяет прямые попадания и цвета соседних матчей; правило ящика определяет допустимость урона.
-   * @returns {number[]} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   damagedBoxes() {
     const boxHits = new Map();
     const addHit = /**
-     * Merges direct and color damage into a single obstacle hit record.
-     * @param {number} index - Row-major cell position.
-     * @param {boolean} direct - Whether damage is a direct booster hit.
-     * @param {Iterable<number>} colors - Colors of adjacent matches.
-     * @returns {void} Completes the callback side effects.
+     * Объединяет прямой урон и цветовой урон в одну запись попадания по ящику.
+     * @param {number} index - Индекс клетки в порядке строк.
+     * @param {boolean} direct - Признак прямого попадания бустера.
+     * @param {Iterable<number>} colors - Цвета соседних матчей.
+     * @returns {void} Завершает побочные эффекты callback-функции.
      */ (index, direct, colors) => {
       if (this.game.board[index]?.kind !== 'box') return;
       if (!boxHits.has(index)) boxHits.set(index, { direct: false, colors: new Set() });
@@ -177,9 +177,9 @@ export class ResolutionWave {
     return [...boxHits]
       .filter(
         /**
-         * Applies the registered obstacle damage policy.
-         * @param {*} entry0 - Destructured entry supplied by the enclosing operation.
-         * @returns {boolean} Callback result used by the enclosing operation.
+         * Описание операции или проверяемого поведения.
+         * @param {*} entry0 - Параметр операции.
+         * @returns Результат выполнения операции.
          */ ([index, hit]) => {
           const item = this.game.board[index];
           return elementRules.get(item.type)?.canDamage(item, hit);
@@ -187,17 +187,17 @@ export class ResolutionWave {
       )
       .map(
         /**
-         * Extracts a damage-approved obstacle position.
-         * @param {*} entry0 - Destructured entry supplied by the enclosing operation.
-         * @returns {*} Callback result used by the enclosing operation.
+         * Описание операции или проверяемого поведения.
+         * @param {*} entry0 - Параметр операции.
+         * @returns Результат выполнения операции.
          */ ([index]) => index,
       );
   }
 
   /**
-   * Сначала собирает фишки, затем повреждает ящики один раз и раскрывает защищённое содержимое.
-   * @param {number[]} damaged - Obstacle indices receiving one hit.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number[]} damaged - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   applyDamage(damaged) {
     const game = this.game;
@@ -225,11 +225,11 @@ export class ResolutionWave {
   }
 
   /**
-   * Сначала рассчитывает всю волну и ждёт удаления, затем изменяет поле и запускает падение.
-   * @param {import("../types.js").Match[]} groups - Connected matches.
-   * @param {import("../types.js").Activation[]} activation - Initial booster queue.
-   * @param {import("../types.js").Combination|null} combo - Optional paired activation.
-   * @returns {Promise<void>} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").Match[]} groups - Параметр операции.
+   * @param {import("../types.js").Activation[]} activation - Параметр операции.
+   * @param {import("../types.js").Combination|null} combo - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async resolve(groups, activation, combo) {
     this.queue.push(...activation);
@@ -239,14 +239,14 @@ export class ResolutionWave {
     const damaged = this.damagedBoxes();
     const removed = [...this.hits].filter(
       /**
-       * Удаление не затрагивает ящики и бустеры, создаваемые текущим матчем.
-       * @param {number} index - Row-major cell position.
-       * @returns {boolean} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @param {number} index - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (index) => this.game.board[index]?.kind !== 'box' && !this.creations.has(index),
     );
     for (const index of damaged) if (this.game.board[index].hp <= 1) removed.push(index);
 
-    // Длительность задаёт UI: падение ждёт завершения эффектов и удаления.
+    // Описание совместимости и назначения модуля.
     await this.game.emit('remove', {
       removed,
       damaged,

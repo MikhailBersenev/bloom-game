@@ -1,41 +1,41 @@
 /**
- * Shared domain vocabulary. Cell positions use row-major numeric indices in the engine.
+ * Описание операции или проверяемого поведения.
  * @typedef {{row: number, col: number}} Position
  * @typedef {'h'|'v'} Axis
  * @typedef {'line'|'bomb'|'plane'|'rainbow'} BoosterType
  * @typedef {Object} Piece
- * @property {'gem'|'booster'|'box'} kind - Runtime element category.
- * @property {number} id - Unique runtime identity used by animations.
- * @property {number} [color] - Zero-based palette index.
- * @property {string} [type] - Booster or obstacle subtype.
- * @property {Axis} [axis] - Line direction.
- * @property {number} [hp] - Remaining obstacle durability.
- * @property {Piece|null} [contains] - Nested obstacle contents.
+ * @property {'gem'|'booster'|'box'} kind - Свойство структуры.
+ * @property {number} id - Свойство структуры.
+ * @property {number} [color] - Свойство структуры.
+ * @property {string} [type] - Свойство структуры.
+ * @property {Axis} [axis] - Свойство структуры.
+ * @property {number} [hp] - Свойство структуры.
+ * @property {Piece|null} [contains] - Свойство структуры.
  * @typedef {Piece|null} Cell
  * @typedef {{cells: number[], axis: 'h'|'v'|'square'}} MatchPattern
  * @typedef {{cells: number[], patterns: MatchPattern[], color: number, type: BoosterType|null, axis: Axis}} Match
  * @typedef {[number, number]} Move
  * @typedef {{type: string, i: number, axis?: string, target?: number, large?: boolean, label?: string}} BoosterEffect
  * @typedef {Object} GravityMove
- * @property {number} id - Идентификатор фишки.
- * @property {number} from - Начальная строка; для новых фишек источник выше границы своей секции.
- * @property {number} to - Конечная строка.
- * @property {number} col - Столбец.
- * @property {boolean} spawn - Новая фишка, ожидающая отдельной фазы появления.
- * @property {number} segmentTop - Верхняя свободная строка; граница видимости при появлении.
- * @property {number} segmentBottom - Нижняя свободная строка.
+ * @property {number} id - Свойство структуры.
+ * @property {number} from - Свойство структуры.
+ * @property {number} to - Свойство структуры.
+ * @property {number} col - Свойство структуры.
+ * @property {boolean} spawn - Свойство структуры.
+ * @property {number} segmentTop - Свойство структуры.
+ * @property {number} segmentBottom - Свойство структуры.
  * @typedef {{key: string, count: number}} GoalConfig
  * @typedef {Object} LevelConfig
- * @property {number} rows - Board height.
- * @property {number} cols - Board width.
- * @property {number} colors - Number of available colors.
- * @property {number} moves - Initial move budget.
- * @property {GoalConfig[]} goals - Required collection counts.
- * @property {Array<number|string|Piece|null>} [map] - Fixed and random cell templates.
- * @property {Array<[number, number, Piece|number]>} [placements] - Sparse template positions.
- * @property {number} [id] - Level number.
- * @property {string} [name] - Display name.
- * @property {string} [subtitle] - Display description.
+ * @property {number} rows - Свойство структуры.
+ * @property {number} cols - Свойство структуры.
+ * @property {number} colors - Свойство структуры.
+ * @property {number} moves - Свойство структуры.
+ * @property {GoalConfig[]} goals - Свойство структуры.
+ * @property {Array<number|string|Piece|null>} [map] - Свойство структуры.
+ * @property {Array<[number, number, Piece|number]>} [placements] - Свойство структуры.
+ * @property {number} [id] - Свойство структуры.
+ * @property {string} [name] - Свойство структуры.
+ * @property {string} [subtitle] - Свойство структуры.
  * @typedef {{i: number, color?: number|null}} Activation
  * @typedef {{a: number, b: number}} Combination
  */

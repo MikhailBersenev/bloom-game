@@ -1,20 +1,20 @@
 export class RainbowBooster {
   /**
-   * Calculates affected positions and presentation metadata without mutating game state.
-   * @param {import("../core/Game.js").Game} game - Current game session.
-   * @param {number} index - Row-major cell position.
-   * @param {string} [axis] - Effect direction.
-   * @param {number|null} [color] - Palette index, or null to select automatically.
-   * @param {Set<number>} [excluded] - Positions unavailable for targeting.
-   * @returns {{positions: number[], effect: import("../types.js").BoosterEffect}} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../core/Game.js").Game} game - Параметр операции.
+   * @param {number} index - Параметр операции.
+   * @param {string} [axis] - Параметр операции.
+   * @param {number|null} [color] - Параметр операции.
+   * @param {Set<number>} [excluded] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   describe(game, index, axis = 'h', color = null, excluded = new Set()) {
     const selectedColor = color ?? game.bestColor();
     const positions = [...game.board.keys()].filter(
       /**
-       * Selects gems of the chosen color, excluding all other element kinds.
-       * @param {number} position - Row-major cell position.
-       * @returns {boolean} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @param {number} position - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (position) =>
         game.board[position]?.kind === 'gem' && game.board[position].color === selectedColor,
     );

@@ -2,9 +2,9 @@ import { calculateGravity } from '../core/Gravity.js';
 import { gem } from '../entities/Piece.js';
 import { Board } from '../core/Board.js';
 /**
- * Applies gravity in place for legacy callers and returns paths for animation.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @returns {import("../types.js").GravityMove[]} Result of the described operation.
+ * Применяет гравитацию на месте для совместимых вызывающих модулей и возвращает траектории анимации.
+ * @param {import("../core/Game.js").Game} game - Текущая игровая сессия.
+ * @returns {import("../types.js").GravityMove[]} Траектории падения.
  */
 export function applyGravity(game) {
   const board = new Board(game.rows, game.cols);
@@ -12,8 +12,8 @@ export function applyGravity(game) {
   const { cells, falls } = calculateGravity(
     board,
     /**
-     * Supplies a fresh gem using the legacy random source.
-     * @returns {*} Callback result used by the enclosing operation.
+     * Создаёт новую фишку с помощью совместимого источника случайных чисел.
+     * @returns {*} Результат callback-функции.
      */ () => gem(game.rand(game.level.colors)),
   );
   game.board.splice(0, game.board.length, ...cells);

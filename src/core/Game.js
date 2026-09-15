@@ -10,10 +10,10 @@ import { findMatches } from './MatchFinder.js';
 import { ResolutionWave } from './ResolutionWave.js';
 
 /**
- * Рекурсивно копирует и замораживает данные снимка, чтобы внешнее изменение
- * уровня или вложенного элемента не могло повлиять на игровую сессию.
- * @param {*} value - Значение из текущего состояния игры.
- * @returns {*} Независимая неизменяемая копия.
+ * Описание операции или проверяемого поведения.
+ * Описание операции или проверяемого поведения.
+ * @param {*} value - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 function frozenCopy(value) {
   if (value === null || typeof value !== 'object') return value;
@@ -23,30 +23,41 @@ function frozenCopy(value) {
   );
 }
 
-/** Public session facade: owns counters and composes domain operations through an injected async event sink. */
+/**
+ * Описание операции или проверяемого поведения.
+ * @param {*} value - Параметр операции.
+ * @returns Результат выполнения операции.
+ */
+function cloneData(value) {
+  if (value === null || typeof value !== 'object') return value;
+  if (Array.isArray(value)) return value.map(cloneData);
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, cloneData(item)]));
+}
+
+/** Публичная оболочка сессии: хранит счётчики и объединяет игровые операции через асинхронный обработчик событий. */
 export class Game {
   /**
-   * Initializes owned state and injected dependencies.
-   * @param {import("../types.js").LevelConfig} level - Level settings.
-   * @param {Object} options - Named configuration and injected callbacks; see the destructured signature for defaults.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").LevelConfig} level - Параметр операции.
+   * @param {Object} options - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   constructor(
     level,
     {
       random = Math.random,
       animate = /**
-       * Completes events immediately when no presentation adapter is supplied.
-       * @returns {Promise<void>} Callback result used by the enclosing operation.
+       * Мгновенно завершает события, если адаптер отображения не передан.
+       * @returns {Promise<void>} Результат callback-функции.
        */ async () => {},
     } = {},
   ) {
-    this.level = level;
-    this.rows = level.rows;
-    this.cols = level.cols;
+    this.level = cloneData(level);
+    this.rows = this.level.rows;
+    this.cols = this.level.cols;
     this.random = random;
     this.animate = animate;
-    this.moves = level.moves;
+    this.moves = this.level.moves;
     this.score = 0;
     this.collected = {};
     this.busy = false;
@@ -58,17 +69,17 @@ export class Game {
   }
 
   /**
-   * Exposes the live cell array for compatibility with engine consumers.
-   * @returns {import("../types.js").Cell[]} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   get board() {
     return this.field.cells;
   }
 
   /**
-   * Возвращает независимый неизменяемый снимок состояния для интерфейса и интеграций.
-   * Изменять живую игровую сессию можно только через её команды.
-   * @returns {Object} Независимый снимок состояния.
+   * Описание операции или проверяемого поведения.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   getSnapshot() {
     return Object.freeze({
@@ -87,18 +98,18 @@ export class Game {
   }
 
   /**
-   * Replaces cell storage for compatibility with fixtures and engine consumers.
-   * @param {import("../types.js").Cell[]} cells - Cell storage.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").Cell[]} cells - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   set board(cells) {
     this.field.cells = cells;
   }
 
   /**
-   * Applies the testing-panel outcome and its counters when the session is idle.
-   * @param {boolean} isWon - Whether to force victory.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {boolean} isWon - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   forceOutcome(isWon) {
     if (this.busy) return;
@@ -111,124 +122,124 @@ export class Game {
   }
 
   /**
-   * Copies an element and nested contents with fresh runtime identities.
-   * @param {import("../types.js").Cell} item - Current element.
-   * @returns {import("../types.js").Cell} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").Cell} item - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   clone(item) {
     return cloneElement(item);
   }
 
   /**
-   * Подбирает случайные клетки без стартовых матчей и с допустимым ходом; заданные клетки сохраняет. При исчерпании попыток сообщает об ошибке.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   initialize() {
     return initializeBoard(this);
   }
 
   /**
-   * Creates a gem using the injected random source and current level palette.
-   * @returns {import("../types.js").Piece} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   createPiece() {
     return gem(this.rand(this.level.colors));
   }
 
   /**
-   * Returns a uniformly selected integer below the exclusive bound using the injected random source.
-   * @param {number} n - Count or exclusive upper bound.
-   * @returns {number} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} n - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   rand(n) {
     return Math.floor(this.random() * n);
   }
 
   /**
-   * Converts a row-major cell index to its row and column.
-   * @param {number} i - Row-major cell index.
-   * @returns {number[]} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} i - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   rc(i) {
     return this.field.coordinatesAt(i);
   }
 
   /**
-   * Converts row and column to a cell index, returning -1 outside the board.
-   * @param {number} r - Zero-based row.
-   * @param {number} c - Zero-based column.
-   * @returns {number} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} r - Параметр операции.
+   * @param {number} c - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   at(r, c) {
     return this.field.indexAt(r, c);
   }
 
   /**
-   * Returns in-bounds orthogonal neighbors in up, down, left, right order.
-   * @param {number} i - Row-major cell index.
-   * @returns {number[]} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} i - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   adjacent(i) {
     return this.field.neighborsOf(i);
   }
 
   /**
-   * Returns the occupied non-obstacle predicate, retaining the legacy null result for empty cells.
-   * @param {number} i - Row-major cell index.
-   * @returns {boolean|null|undefined} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} i - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   movable(i) {
     return this.field.hasMovablePiece(i);
   }
 
   /**
-   * Ищет ряды и квадраты без изменения поля; стабильный порядок фигур определяет создание бустеров.
-   * @returns {import("../types.js").Match[]} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   findMatches() {
     return findMatches(this.board, this.rows, this.cols);
   }
 
   /**
-   * Проверяет обмены в стабильном порядке и восстанавливает поле после каждой пробной перестановки.
-   * @returns {Array<import("../types.js").Move>} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   legalMoves() {
     return findLegalMoves(this);
   }
 
   /**
-   * Adds collected elements to the counter identified by a goal key.
-   * @param {string} key - Collection key supported by the element.
-   * @param {number} [n] - Count or exclusive upper bound.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {string} key - Параметр операции.
+   * @param {number} [n] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   collect(key, n = 1) {
     return collect(this.collected, key, n);
   }
 
   /**
-   * Returns the outstanding goal count, clamped at zero.
-   * @param {import("../types.js").GoalConfig} goal - Collection requirement.
-   * @returns {number} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").GoalConfig} goal - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   remaining(goal) {
     return remaining(this.collected, goal);
   }
 
   /**
-   * Checks whether every current level goal has been completed.
-   * @returns {boolean} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   won() {
     return won(this.level.goals, this.collected);
   }
 
   /**
-   * Sends a shallow cell snapshot to the injected event sink and waits for its completion.
-   * @param {string} type - Element or event subtype.
-   * @param {Object} [extra={}] - Additional event metadata.
-   * @returns {Promise<void>} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {string} type - Параметр операции.
+   * @param {Object} [extra={}] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async emit(type, extra = {}) {
     await this.animate(
@@ -236,9 +247,9 @@ export class Game {
         type,
         board: this.board.map(
           /**
-           * Copies cell properties for the event snapshot.
-           * @param {number} x - Candidate coordinate or element.
-           * @returns {*} Callback result used by the enclosing operation.
+           * Описание операции или проверяемого поведения.
+           * @param {number} x - Параметр операции.
+           * @returns Результат выполнения операции.
            */ (x) => (x ? { ...x } : null),
         ),
         ...extra,
@@ -248,64 +259,64 @@ export class Game {
   }
 
   /**
-   * Приоритет у цветов незавершённых целей, затем у количества фишек; равенство решает порядок палитры.
-   * @returns {number} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   bestColor() {
     return bestColor(this);
   }
 
   /**
-   * Выбирает первую цель наивысшего приоритета вне исключённых клеток; каменные блокеры не выбираются.
-   * @param {Set<number>} [exclude] - Positions unavailable for targeting.
-   * @returns {number} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {Set<number>} [exclude] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   target(exclude = new Set()) {
     return target(this, exclude);
   }
 
   /**
-   * Returns indices inside a square radius, clipped to the board.
-   * @param {number} i - Row-major cell index.
-   * @param {number} radius - Inclusive square radius.
-   * @returns {number[]} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} i - Параметр операции.
+   * @param {number} radius - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   area(i, radius) {
     return this.field.squareAround(i, radius);
   }
 
   /**
-   * Returns indices of a horizontal or vertical strip; width is the exclusive distance from its center.
-   * @param {number} i - Row-major cell index.
-   * @param {string} [axis] - Effect direction.
-   * @param {number} [width] - Exclusive strip distance.
-   * @returns {number[]} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} i - Параметр операции.
+   * @param {string} [axis] - Параметр операции.
+   * @param {number} [width] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   line(i, axis = 'h', width = 1) {
     return this.field.lineThrough(i, axis, width);
   }
 
   /**
-   * Разрешает волну удаления вместе с цепной реакцией, затем ожидает анимацию падения.
-   * @param {import("../types.js").Match[]} [groups] - Connected matches.
-   * @param {import("../types.js").Activation[]} [activation] - Initial booster queue.
-   * @param {import("../types.js").Combination|null} [combo] - Optional paired activation.
-   * @returns {Promise<void>} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").Match[]} [groups] - Параметр операции.
+   * @param {import("../types.js").Activation[]} [activation] - Параметр операции.
+   * @param {import("../types.js").Combination|null} [combo] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async wave(groups = [], activation = [], combo = null) {
     await new ResolutionWave(this).resolve(groups, activation, combo);
   }
 
   /**
-   * Applies the calculated fall positions in place and waits for the fall event.
-   * @returns {Promise<void>} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   async gravity() {
     const { cells, falls } = calculateGravity(
       this.field,
       /**
-       * Supplies a new gem for a gravity vacancy.
-       * @returns {*} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @returns Результат выполнения операции.
        */ () => this.createPiece(),
     );
     this.board.splice(0, this.board.length, ...cells);
@@ -313,40 +324,40 @@ export class Game {
   }
 
   /**
-   * Матчи разрешаются последовательно; предел каскадов защищает от бесконечной цепочки.
-   * @returns {Promise<void>} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   async settle() {
     return resolveBoard(this);
   }
   /**
-   * Принятый обмен расходует один ход и ожидает каскады; недопустимый обмен возвращается без расхода хода.
-   * @param {number} a - First cell index.
-   * @param {number} b - Second cell index.
-   * @returns {Promise<boolean>} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} a - Параметр операции.
+   * @param {number} b - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async swap(a, b) {
     return resolveMove(this, a, b);
   }
   /**
-   * Consumes one move to activate a booster and finish its cascades; releases the busy flag even on failure.
-   * @param {number} i - Row-major cell index.
-   * @returns {Promise<boolean>} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} i - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   async activate(i) {
     return activateBooster(this, i);
   }
   /**
-   * После каскадов ящики меняют цвет один раз; победа проверяется раньше поражения, затем восстанавливаются ходы.
-   * @returns {Promise<void>} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   async finishTurn() {
     return finishTurn(this);
   }
 
   /**
-   * Перемешивает фишки, при необходимости подбирает цвета заново; ящики неподвижны, завершение анимации обязательно.
-   * @returns {Promise<void>} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   async shuffle() {
     return shuffleBoard(this);

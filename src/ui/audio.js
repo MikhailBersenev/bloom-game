@@ -1,11 +1,11 @@
-/** Optional sound. Browsers without Web Audio still run the game normally. */
+/** Дополнительный звук. Браузеры без Web Audio всё равно запускают игру штатно. */
 export class GameAudio {
   muted = true;
   context = null;
 
   /**
-   * Toggles muted state and plays feedback when enabling sound.
-   * @returns {boolean} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @returns Результат выполнения операции.
    */
   toggle() {
     this.muted = !this.muted;
@@ -14,9 +14,9 @@ export class GameAudio {
   }
 
   /**
-   * Plays the requested presentation with the configured view or optional audio device.
-   * @param {number} [frequency] - Tone frequency in hertz.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} [frequency] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   play(frequency = 440) {
     if (this.muted) return;
@@ -34,7 +34,7 @@ export class GameAudio {
       oscillator.start();
       oscillator.stop(now + 0.18);
     } catch {
-      // Audio permissions or device availability must not interrupt a turn.
+      // Описание совместимости и назначения модуля.
     }
   }
 }

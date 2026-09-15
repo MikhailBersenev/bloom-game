@@ -2,17 +2,17 @@ import { booster } from '../entities/Piece.js';
 
 export class BoosterCombinationResolver {
   /**
-   * Initializes owned state and injected dependencies.
-   * @param {import("../core/ResolutionWave.js").ResolutionWave} wave - Accumulated wave receiving combination effects.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../core/ResolutionWave.js").ResolutionWave} wave - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   constructor(wave) {
     this.wave = wave;
   }
   /**
-   * Оба участника комбинации засчитываются до запуска цепной реакции.
-   * @param {import("../types.js").Combination} options - Indices of the two exchanged boosters.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").Combination} options - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   combine({ a, b }) {
     const game = this.wave.game;
@@ -62,19 +62,19 @@ export class BoosterCombinationResolver {
     }
   }
   /**
-   * Фишки выбранного цвета превращаются в бустеры партнёра и активируются в порядке клеток поля.
-   * @param {import("../types.js").Piece} partner - Partner booster.
-   * @param {number} origin - Effect origin index.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").Piece} partner - Параметр операции.
+   * @param {number} origin - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   convertColor(partner, origin) {
     const color = this.wave.game.bestColor();
     this.wave.game.board.forEach(
       /**
-       * Converts a gem of the chosen color into the partner booster and queues it.
-       * @param {import("../types.js").Cell} item - Current element.
-       * @param {number} index - Row-major cell position.
-       * @returns {void} Completes the callback side effects.
+       * Описание операции или проверяемого поведения.
+       * @param {import("../types.js").Cell} item - Параметр операции.
+       * @param {number} index - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (item, index) => {
         if (item?.kind !== 'gem' || item.color !== color) return;
         this.wave.transformGem(index, booster(partner.type, index % 2 ? 'h' : 'v'));
@@ -83,9 +83,9 @@ export class BoosterCombinationResolver {
     this.wave.effects.push({ type: 'rainbow', i: origin });
   }
   /**
-   * Каждый полёт резервирует отдельную приоритетную цель; -1 означает отсутствие доступных целей.
-   * @param {number} origin - Effect origin index.
-   * @returns {number} Result of the described operation.
+   * Описание операции или проверяемого поведения.
+   * @param {number} origin - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   flyToTarget(origin) {
     const target = this.wave.game.target(this.wave.hits);

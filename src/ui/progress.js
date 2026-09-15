@@ -1,8 +1,8 @@
 const STORAGE_KEY = 'bloom-progress';
 
 /**
- * Reads saved progress with safe defaults when storage is absent or invalid.
- * @returns {{unlocked: number, level: number}} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @returns Результат выполнения операции.
  */
 export function loadProgress() {
   try {
@@ -13,14 +13,14 @@ export function loadProgress() {
 }
 
 /**
- * Persists navigation progress; storage failures do not interrupt play.
- * @param {{unlocked: number, level: number}} progress - Saved navigation state.
- * @returns {void} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {{unlocked: number, level: number}} progress - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function saveProgress(progress) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   } catch {
-    // Private browsing or full storage must not prevent local play.
+    // Описание совместимости и назначения модуля.
   }
 }

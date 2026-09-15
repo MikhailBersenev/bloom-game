@@ -1,4 +1,4 @@
-/** Declarative level templates. Runtime IDs are assigned when a game starts. */
+/** Декларативные шаблоны уровней. Рабочие идентификаторы назначаются при запуске игры. */
 export const levelConfigs = [
   {
     id: 1,

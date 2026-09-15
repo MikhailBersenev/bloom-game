@@ -1,8 +1,8 @@
 /**
  * Сжимает независимые секции между ящиками на копии поля, сохраняя порядок фишек и вызовов генератора.
  * @param {import("../core/Board.js").Board} board - Board state and dimensions.
- * @param {function(): import("../types.js").Piece} spawnPiece - Factory called once per vacancy.
- * @returns {{cells: import("../types.js").Cell[], falls: import("../types.js").GravityMove[]}} Result of the described operation.
+ * @param {function(): import("../types.js").Piece} spawnPiece - Фабрика, вызываемая один раз для каждой пустой клетки.
+ * @returns {{cells: import("../types.js").Cell[], falls: import("../types.js").GravityMove[]}} Новое поле и траектории падения.
  */
 export function calculateGravity(board, spawnPiece) {
   const cells = [...board.cells];
@@ -28,12 +28,12 @@ export function calculateGravity(board, spawnPiece) {
  * Существующие фишки остаются в своей секции; новые появляются относительно её верхней границы.
  * @param {import("../core/Board.js").Board} board - Board state and dimensions.
  * @param {import("../types.js").Cell[]} cells - Cell storage.
- * @param {function(): import("../types.js").Piece} spawnPiece - Factory called once per vacancy.
- * @param {number} col - Zero-based column.
- * @param {number} top - First row of the segment.
- * @param {number} bottom - Last row of the segment.
- * @param {import("../types.js").GravityMove[]} falls - Output animation paths.
- * @returns {void} Completes the operation.
+ * @param {function(): import("../types.js").Piece} spawnPiece - Фабрика, вызываемая один раз для каждой пустой клетки.
+ * @param {number} col - Столбец с нулевой индексацией.
+ * @param {number} top - Первая строка секции.
+ * @param {number} bottom - Последняя строка секции.
+ * @param {import("../types.js").GravityMove[]} falls - Траектории для анимации.
+ * @returns {void} Завершает операцию.
  */
 function compactSegment(board, cells, spawnPiece, col, top, bottom, falls) {
   const survivors = [];

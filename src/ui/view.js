@@ -2,12 +2,12 @@ import { tileTransform, animateElement } from './motion.js';
 import { HudView } from './HudView.js';
 import { icon, itemLabel } from './presentation.js';
 
-/** Renders snapshots; it never changes the engine state. */
+/** Отображает снимки состояния и не изменяет состояние движка. */
 export class GameView {
   /**
-   * Initializes owned state and injected dependencies.
-   * @param {Document} [root] - DOM root containing the controls.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {Document} [root] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   constructor(root = document) {
     this.root = root;
@@ -19,9 +19,9 @@ export class GameView {
   }
 
   /**
-   * Shows temporary feedback, replacing any pending dismissal timer.
-   * @param {string} text - Feedback message.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {string} text - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   toast(text) {
     this.root.querySelector('#toast').textContent = text;
@@ -29,28 +29,28 @@ export class GameView {
     clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(
       /**
-       * Hides expired toast feedback.
-       * @returns {*} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @returns Результат выполнения операции.
        */ () => this.root.querySelector('#toast').classList.remove('visible'),
       1700,
     );
   }
 
   /**
-   * Reconciles snapshot pieces with DOM tiles by identity and updates selection and accessibility labels.
-   * @param {import("../core/Game.js").Game} game - Current game session.
-   * @param {number|null} [selected] - Selected cell index.
-   * @param {import("../types.js").Cell[]} [state] - Snapshot to display.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../core/Game.js").Game} game - Параметр операции.
+   * @param {number|null} [selected] - Параметр операции.
+   * @param {import("../types.js").Cell[]} [state] - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   draw(game, selected = null, state = game.board) {
     const liveIds = new Set();
     state.forEach(
       /**
-       * Reconciles one snapshot piece with its DOM tile and accessibility metadata.
-       * @param {import("../types.js").Cell} item - Current element.
-       * @param {number} index - Row-major cell position.
-       * @returns {void} Completes the callback side effects.
+       * Описание операции или проверяемого поведения.
+       * @param {import("../types.js").Cell} item - Параметр операции.
+       * @param {number} index - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (item, index) => {
         if (!item) return;
         liveIds.add(String(item.id));
@@ -96,9 +96,9 @@ export class GameView {
       if (!liveIds.has(tile.dataset.id)) tile.remove();
   }
 
-  /** Builds durability and hidden-content indicators without altering obstacle state.
-   * @param {import('../types.js').Piece} item - Rendered element.
-   * @returns {string} Decorative obstacle markup, or an empty string.
+  /** Создаёт индикаторы прочности и скрытого содержимого без изменения ящика.
+   * @param {import('../types.js').Piece} item - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   obstacleDetails(item) {
     if (item.kind !== 'box' || item.type === 'blocker') return '';
@@ -108,29 +108,29 @@ export class GameView {
   }
 
   /**
-   * Renders move budget, score, goal progress and busy state without changing gameplay.
-   * @param {import("../core/Game.js").Game} game - Current game session.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../core/Game.js").Game} game - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   hud(game) {
     this.hudView.hud(game);
   }
 
   /**
-   * Renders level navigation and the saved completion state.
-   * @param {import("../types.js").LevelConfig[]} levels - Available levels.
-   * @param {number} index - Row-major cell position.
-   * @param {number} unlocked - Saved unlock marker.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../types.js").LevelConfig[]} levels - Параметр операции.
+   * @param {number} index - Параметр операции.
+   * @param {number} unlocked - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   renderMap(levels, index, unlocked) {
     this.root.querySelector('#level-map').innerHTML = levels
       .map(
         /**
-         * Builds a map button showing current and completed levels.
-         * @param {import("../types.js").LevelConfig} level - Level settings.
-         * @param {number} position - Row-major cell position.
-         * @returns {*} Computed callback result.
+         * Описание операции или проверяемого поведения.
+         * @param {import("../types.js").LevelConfig} level - Параметр операции.
+         * @param {number} position - Параметр операции.
+         * @returns Результат выполнения операции.
          */ (level, position) => {
           const current = position === index;
           const passed = position + 1 < unlocked;
@@ -153,10 +153,10 @@ export class GameView {
   }
 
   /**
-   * Clears previous visuals and configures board dimensions and level headings.
-   * @param {import("../core/Game.js").Game} game - Current game session.
-   * @param {number} index - Row-major cell position.
-   * @returns {void} Completes the operation.
+   * Описание операции или проверяемого поведения.
+   * @param {import("../core/Game.js").Game} game - Параметр операции.
+   * @param {number} index - Параметр операции.
+   * @returns Результат выполнения операции.
    */
   prepareLevel(game, index) {
     clearTimeout(this.toastTimer);

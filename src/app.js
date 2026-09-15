@@ -1,2 +1,2 @@
-// Compatibility browser entry point.
+// Описание совместимости и назначения модуля.
 import './main.js';

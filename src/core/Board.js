@@ -1,9 +1,9 @@
 export class Board {
   /**
-   * Initializes owned state and injected dependencies.
+   * Инициализирует собственное состояние и переданные зависимости.
    * @param {number} rows - Board height.
    * @param {number} cols - Board width.
-   * @returns {void} Completes the operation.
+   * @returns {void} Завершает операцию.
    */
   constructor(rows, cols) {
     this.rows = rows;
@@ -11,10 +11,10 @@ export class Board {
     this.cells = Array(rows * cols).fill(null);
   }
   /**
-   * Exchanges two cells in place without validating move rules.
-   * @param {number} firstIndex - First cell index.
-   * @param {number} secondIndex - Second cell index.
-   * @returns {void} Completes the operation.
+   * Обменивает две клетки на месте без проверки правил хода.
+   * @param {number} firstIndex - Индекс первой клетки.
+   * @param {number} secondIndex - Индекс второй клетки.
+   * @returns {void} Завершает операцию.
    */
   swap(firstIndex, secondIndex) {
     [this.cells[firstIndex], this.cells[secondIndex]] = [
@@ -24,26 +24,26 @@ export class Board {
   }
 
   /**
-   * Converts a row-major cell index to its row and column.
-   * @param {number} index - Row-major cell position.
-   * @returns {number[]} Result of the described operation.
+   * Преобразует индекс клетки в порядке строк в её строку и столбец.
+   * @param {number} index - Индекс клетки в порядке строк.
+   * @returns {number[]} Результат выполнения операции.
    */
   coordinatesAt(index) {
     return [Math.floor(index / this.cols), index % this.cols];
   }
   /**
-   * Converts row and column to a cell index, returning -1 outside the board.
-   * @param {number} row - Zero-based row.
-   * @param {number} col - Zero-based column.
-   * @returns {number} Result of the described operation.
+   * Преобразует строку и столбец в индекс клетки, возвращая -1 за пределами поля.
+   * @param {number} row - Строка с нулевой индексацией.
+   * @param {number} col - Столбец с нулевой индексацией.
+   * @returns {number} Результат выполнения операции.
    */
   indexAt(row, col) {
     return row >= 0 && col >= 0 && row < this.rows && col < this.cols ? row * this.cols + col : -1;
   }
   /**
-   * Returns in-bounds orthogonal neighbors in up, down, left, right order.
-   * @param {number} index - Row-major cell position.
-   * @returns {number[]} Result of the described operation.
+   * Возвращает соседние клетки по сторонам света в порядке вверх, вниз, влево, вправо.
+   * @param {number} index - Индекс клетки в порядке строк.
+   * @returns {number[]} Результат выполнения операции.
    */
   neighborsOf(index) {
     const [row, col] = this.coordinatesAt(index);
@@ -55,32 +55,32 @@ export class Board {
     ]
       .map(
         /**
-         * Converts an orthogonal neighbor to its board index.
+         * Преобразует соседнюю клетку в индекс поля.
          * @param {*} entry0 - Destructured entry supplied by the enclosing operation.
-         * @returns {*} Callback result used by the enclosing operation.
+         * @returns {*} Результат callback-функции.
          */ ([y, x]) => this.indexAt(y, x),
       )
       .filter(
         /**
-         * Rejects out-of-bounds neighbor indices.
-         * @param {number} x - Candidate coordinate or element.
-         * @returns {boolean} Callback result used by the enclosing operation.
+         * Отбрасывает индексы за пределами поля.
+         * @param {number} x - Проверяемая координата или элемент.
+         * @returns {boolean} Результат callback-функции.
          */ (x) => x >= 0,
       );
   }
   /**
-   * Returns the occupied non-obstacle predicate, retaining the legacy null result for empty cells.
-   * @param {number} index - Row-major cell position.
-   * @returns {boolean|null|undefined} Result of the described operation.
+   * Проверяет подвижность занятой клетки, сохраняя совместимый результат null для пустой клетки.
+   * @param {number} index - Индекс клетки в порядке строк.
+   * @returns {boolean|null|undefined} Результат выполнения операции.
    */
   hasMovablePiece(index) {
     return this.cells[index] && this.cells[index].kind !== 'box';
   }
   /**
-   * Returns indices inside a square radius, clipped to the board.
-   * @param {number} index - Row-major cell position.
+   * Возвращает индексы внутри квадратного радиуса с обрезкой по полю.
+   * @param {number} index - Индекс клетки в порядке строк.
    * @param {number} radius - Inclusive square radius.
-   * @returns {number[]} Result of the described operation.
+   * @returns {number[]} Результат выполнения операции.
    */
   squareAround(index, radius) {
     const [row, col] = this.coordinatesAt(index);
@@ -94,28 +94,28 @@ export class Board {
     return positions;
   }
   /**
-   * Returns indices of a horizontal or vertical strip; width is the exclusive distance from its center.
-   * @param {number} index - Row-major cell position.
-   * @param {string} [axis] - Effect direction.
+   * Возвращает индексы горизонтальной или вертикальной полосы заданной ширины.
+   * @param {number} index - Индекс клетки в порядке строк.
+   * @param {string} [axis] - Направление эффекта.
    * @param {number} [width] - Exclusive strip distance.
-   * @returns {number[]} Result of the described operation.
+   * @returns {number[]} Результат выполнения операции.
    */
   lineThrough(index, axis = 'h', width = 1) {
     const [row, col] = this.coordinatesAt(index);
     return this.cells
       .map(
         /**
-         * Enumerates cell positions independently of their contents.
+         * Перечисляет позиции клеток независимо от их содержимого.
          * @param {*} _ - Value supplied by the enclosing operation.
-         * @param {number} position - Row-major cell position.
-         * @returns {*} Callback result used by the enclosing operation.
+         * @param {number} position - Индекс клетки в порядке строк.
+         * @returns {*} Результат callback-функции.
          */ (_, position) => position,
       )
       .filter(
         /**
-         * Selects positions within the requested line strip.
-         * @param {number} position - Row-major cell position.
-         * @returns {boolean} Callback result used by the enclosing operation.
+         * Выбирает позиции внутри запрошенной полосы.
+         * @param {number} position - Индекс клетки в порядке строк.
+         * @returns {boolean} Результат callback-функции.
          */ (position) => {
           const [y, x] = this.coordinatesAt(position);
           return axis === 'h' ? Math.abs(y - row) < width : Math.abs(x - col) < width;

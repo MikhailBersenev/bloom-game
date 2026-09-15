@@ -59,6 +59,22 @@ test('snapshot level, goals, map and nested contents cannot mutate the live sess
   assert.equal(game.board[nestedIndex].contains.hp, liveBefore.nestedHp);
 });
 
+test('game owns its level config and ignores mutations of the external template', () => {
+  const level = structuredClone(levels[9]);
+  const game = new Game(level, { random: rng(8) });
+  const originalMoves = game.level.moves;
+  const originalGoal = game.level.goals[0].count;
+  const originalMapCell = structuredClone(game.level.map[0]);
+
+  level.moves = 1;
+  level.goals[0].count = 999;
+  level.map[0] = null;
+
+  assert.equal(game.level.moves, originalMoves);
+  assert.equal(game.level.goals[0].count, originalGoal);
+  assert.deepEqual(game.level.map[0], originalMapCell);
+});
+
 test('swap exposes exact diagnostic reasons and publishes the result before final events', async () => {
   const expectSwap = async (prepare, indices, expected) => {
     const game = fixture();

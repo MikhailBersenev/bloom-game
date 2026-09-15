@@ -1,4 +1,4 @@
-// Public engine entry point. The browser and Node tests use the same API.
+// Описание совместимости и назначения модуля.
 export { Game } from './core/Game.js';
 export {
   COLORS,

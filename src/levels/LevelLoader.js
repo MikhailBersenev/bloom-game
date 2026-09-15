@@ -1,7 +1,7 @@
 /**
- * Expands sparse placements into a new map; templates remain data and are cloned when a game starts.
- * @param {import("../types.js").LevelConfig} options - Sparse placements and level settings.
- * @returns {import("../types.js").LevelConfig} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../types.js").LevelConfig} options - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function loadLevel({ placements = [], ...settings }) {
   const map = Array(settings.rows * settings.cols).fill('?');

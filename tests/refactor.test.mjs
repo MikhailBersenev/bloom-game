@@ -7,9 +7,9 @@ import { levels } from '../src/levels.js';
 import { Board } from '../src/core/Board.js';
 import { calculateGravity } from '../src/core/Gravity.js';
 
-/** Produces the same repeatable random sequence used to capture the original engine.
- * @param {number} seed - Initial generator state.
- * @returns {function(): number} Random source in [0, 1).
+/** Создаёт ту же повторяемую последовательность случайных чисел, что использовалась для снимка исходного движка.
+ * @param {number} seed - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 function randomSource(seed) {
   return () => {
@@ -36,7 +36,7 @@ test('120 turns retain the corrected engine board, counters and event payloads',
       const moves = game.legalMoves();
       await game.swap(...moves[game.rand(moves.length)]);
     }
-    // Runtime IDs are globally allocated; their numeric offsets are not gameplay state.
+    // Описание совместимости и назначения модуля.
     const trace = JSON.stringify(
       {
         initial,

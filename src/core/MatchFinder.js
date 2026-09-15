@@ -5,29 +5,29 @@ const RUN_DIRECTIONS = [
 ];
 
 /**
- * Ищет ряды и квадраты без изменения поля; стабильный порядок фигур определяет создание бустеров.
- * @param {import("../types.js").Cell[]} board - Row-major cell storage.
- * @param {number} rows - Board height.
- * @param {number} cols - Board width.
- * @returns {import("../types.js").Match[]} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../types.js").Cell[]} board - Параметр операции.
+ * @param {number} rows - Параметр операции.
+ * @param {number} cols - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function findMatches(board, rows, cols) {
   const indexAt = /**
-   * Converts coordinates to a bounded index, using -1 outside the board.
-   * @param {number} row - Zero-based row.
-   * @param {number} col - Zero-based column.
-   * @returns {*} Callback result used by the enclosing operation.
+   * Преобразует координаты в индекс и возвращает -1 за пределами поля.
+   * @param {number} row - Строка с нулевой индексацией.
+   * @param {number} col - Столбец с нулевой индексацией.
+   * @returns {*} Результат callback-функции.
    */ (row, col) => (row >= 0 && col >= 0 && row < rows && col < cols ? row * cols + col : -1);
   const sameColor = /**
-   * Checks that every supplied index holds a gem of the first cell color.
-   * @param {number[]} indices - Positions to compare.
-   * @returns {*} Callback result used by the enclosing operation.
+   * Проверяет, что все переданные индексы содержат фишку цвета первой клетки.
+   * @param {number[]} indices - Позиции для сравнения.
+   * @returns {*} Результат callback-функции.
    */ (indices) =>
     indices.every(
       /**
-       * Checks bounds, element kind and the reference color.
-       * @param {number} index - Row-major cell position.
-       * @returns {boolean} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @param {number} index - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (index) =>
         index >= 0 &&
         board[index]?.kind === 'gem' &&
@@ -41,7 +41,7 @@ export function findMatches(board, rows, cols) {
       if (board[index]?.kind !== 'gem') continue;
       for (const [rowStep, colStep, axis] of RUN_DIRECTIONS) {
         const previous = indexAt(row - rowStep, col - colStep);
-        // Ряд регистрируется только по первой клетке, чтобы не учитывать один матч повторно.
+        // Описание совместимости и назначения модуля.
         if (previous >= 0 && sameColor([index, previous])) continue;
         const cells = [index];
         let nextRow = row + rowStep;
@@ -65,9 +65,9 @@ export function findMatches(board, rows, cols) {
 
   return mergeOverlaps(patterns).map(
     /**
-     * Annotates a connected group with its color and booster creation policy.
-     * @param {import("../types.js").Match} group - Connected match group.
-     * @returns {*} Callback result used by the enclosing operation.
+     * Описание операции или проверяемого поведения.
+     * @param {import("../types.js").Match} group - Параметр операции.
+     * @returns Результат выполнения операции.
      */ (group) => ({
       ...group,
       color: board[group.cells[0]].color,
@@ -77,24 +77,24 @@ export function findMatches(board, rows, cols) {
 }
 
 /**
- * Объединяет пересекающиеся фигуры, сохраняя стабильный порядок клеток для выбора места бустера.
- * @param {import("../types.js").MatchPattern[]} patterns - Overlapping run and square patterns.
- * @returns {Object[]} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../types.js").MatchPattern[]} patterns - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 function mergeOverlaps(patterns) {
   const groups = [];
   for (const pattern of patterns) {
     const touching = groups.filter(
       /**
-       * Finds groups connected to the current pattern.
-       * @param {import("../types.js").Match} group - Connected match group.
-       * @returns {boolean} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @param {import("../types.js").Match} group - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (group) =>
         group.cells.some(
           /**
-           * Checks whether this group cell overlaps the current pattern.
-           * @param {number} index - Row-major cell position.
-           * @returns {boolean} Callback result used by the enclosing operation.
+           * Описание операции или проверяемого поведения.
+           * @param {number} index - Параметр операции.
+           * @returns Результат выполнения операции.
            */ (index) => pattern.cells.includes(index),
         ),
     );

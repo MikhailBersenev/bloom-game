@@ -1,7 +1,7 @@
 /**
- * Приоритет у цветов незавершённых целей, затем у количества фишек; равенство решает порядок палитры.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @returns {number} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function bestColor(game) {
   const counts = Array(game.level.colors).fill(0);
@@ -13,10 +13,10 @@ export function bestColor(game) {
 }
 
 /**
- * Выбирает первую цель наивысшего приоритета вне исключённых клеток; каменные блокеры не выбираются.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @param {Set<number>} [exclude] - Positions unavailable for targeting.
- * @returns {number} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @param {Set<number>} [exclude] - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function target(game, exclude = new Set()) {
   let best = -1,
@@ -32,15 +32,15 @@ export function target(game, exclude = new Set()) {
           : ['booster', `booster:${piece.type}`];
     let value = keys.some(
       /**
-       * Незавершённые цели повышают приоритет выбора элемента.
-       * @param {string} key - Collection key supported by the element.
-       * @returns {boolean} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @param {string} key - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (key) =>
         game.level.goals.some(
           /**
-           * Checks whether this matching goal still needs collection.
-           * @param {import("../types.js").GoalConfig} goal - Collection requirement.
-           * @returns {boolean} Callback result used by the enclosing operation.
+           * Описание операции или проверяемого поведения.
+           * @param {import("../types.js").GoalConfig} goal - Параметр операции.
+           * @returns Результат выполнения операции.
            */ (goal) => goal.key === key && game.remaining(goal) > 0,
         ),
     )

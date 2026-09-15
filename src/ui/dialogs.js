@@ -25,12 +25,12 @@ const OUTCOMES = {
 };
 
 /**
- * Opens the result dialog and binds its continuation action.
- * @param {HTMLDialogElement} modal - Dialog to populate.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @param {boolean} last - Whether this is the final level.
- * @param {function(): *} onContinue - Action for the continuation button.
- * @returns {void} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {HTMLDialogElement} modal - Параметр операции.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @param {boolean} last - Параметр операции.
+ * @param {function(): *} onContinue - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function showResult(modal, game, last, onContinue) {
   const outcome = game.status === 'won' && last ? 'completed' : game.status;
@@ -57,9 +57,9 @@ const RULES = [
 ];
 
 /**
- * Opens gameplay instructions and binds their close buttons.
- * @param {HTMLDialogElement} modal - Dialog to populate.
- * @returns {void} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {HTMLDialogElement} modal - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function showHelp(modal) {
   modal.querySelector('#modal-content').innerHTML = `
@@ -69,10 +69,10 @@ export function showHelp(modal) {
     <div class="rules">
       ${RULES.map(
         /**
-         * Formats a numbered gameplay instruction.
-         * @param {*} rule - Obstacle policy or instruction text.
-         * @param {number} index - Row-major cell position.
-         * @returns {*} Callback result used by the enclosing operation.
+         * Описание операции или проверяемого поведения.
+         * @param {*} rule - Параметр операции.
+         * @param {number} index - Параметр операции.
+         * @returns Результат выполнения операции.
          */ (rule, index) => `<p><b>${index + 1}.</b> ${rule}</p>`,
       ).join('')}
     </div>
@@ -88,9 +88,9 @@ export function showHelp(modal) {
 }
 
 /**
- * Renders the four booster recipes and their descriptions.
- * @param {HTMLElement} container - Container receiving markup.
- * @returns {void} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {HTMLElement} container - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function renderGuide(container) {
   const guide = [
@@ -102,9 +102,9 @@ export function renderGuide(container) {
   container.innerHTML = guide
     .map(
       /**
-       * Formats one booster recipe and its effect description.
-       * @param {*} entry0 - Destructured entry supplied by the enclosing operation.
-       * @returns {*} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @param {*} entry0 - Параметр операции.
+       * @returns Результат выполнения операции.
        */ ([type, title, description]) => `
     <div class="guide-item">
       <div class="guide-icon">${icon({ kind: 'booster', type })}</div>

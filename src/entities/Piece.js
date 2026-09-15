@@ -2,25 +2,25 @@ export const COLORS = ['coral', 'gold', 'green', 'blue', 'purple', 'pink'];
 export const BOOSTERS = ['line', 'bomb', 'rainbow', 'plane'];
 let sequence = 0;
 /**
- * Creates a colored gem with a fresh runtime identity.
- * @param {number|null} color - Palette index, or null to select automatically.
- * @returns {import("../types.js").Piece} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {number|null} color - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export const gem = (color) => ({ kind: 'gem', color, id: ++sequence });
 /**
- * Creates a booster with its direction and a fresh runtime identity.
- * @param {string} type - Element or event subtype.
- * @param {string} [axis] - Effect direction.
- * @returns {import("../types.js").Piece} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {string} type - Параметр операции.
+ * @param {string} [axis] - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export const booster = (type, axis = 'h') => ({ kind: 'booster', type, axis, id: ++sequence });
 /**
- * Creates an obstacle with durability and optional nested contents.
- * @param {string} [type] - Element or event subtype.
- * @param {number} [hp] - Obstacle durability.
- * @param {number|null} [color] - Palette index, or null to select automatically.
- * @param {import("../types.js").Cell} [contains] - Nested contents.
- * @returns {import("../types.js").Piece} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {string} [type] - Параметр операции.
+ * @param {number} [hp] - Параметр операции.
+ * @param {number|null} [color] - Параметр операции.
+ * @param {import("../types.js").Cell} [contains] - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export const box = (type = 'wood', hp = 1, color = 0, contains = null) => ({
   kind: 'box',
@@ -33,9 +33,9 @@ export const box = (type = 'wood', hp = 1, color = 0, contains = null) => ({
 export { elementRules, registerElement } from './obstacles/rules.js';
 
 /**
- * Копирует вложения с новыми ID, чтобы игровые сессии не разделяли изменяемые ящики.
- * @param {import("../types.js").Cell} item - Current element.
- * @returns {import("../types.js").Cell} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../types.js").Cell} item - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function cloneElement(item) {
   if (!item) return null;

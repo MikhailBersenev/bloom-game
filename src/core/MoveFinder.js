@@ -1,7 +1,7 @@
 /**
  * Проверяет обмены в стабильном порядке и восстанавливает поле после каждой пробной перестановки.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @returns {Array<import("../types.js").Move>} Result of the described operation.
+ * @param {import("../core/Game.js").Game} game - Текущая игровая сессия.
+ * @returns {Array<import("../types.js").Move>} Список допустимых обменов.
  */
 export function findLegalMoves(game) {
   const result = [];
@@ -24,9 +24,9 @@ export function findLegalMoves(game) {
         if (
           game.findMatches().some(
             /**
-             * Checks whether a speculative exchange creates a match touching either swapped cell.
+             * Проверяет, создаёт ли пробный обмен матч, затрагивающий одну из обменянных клеток.
              * @param {import("../types.js").Match} match - Match produced by the tentative exchange.
-             * @returns {boolean} Callback result used by the enclosing operation.
+             * @returns {boolean} Результат проверки.
              */ (match) => match.cells.includes(firstIndex) || match.cells.includes(secondIndex),
           )
         )

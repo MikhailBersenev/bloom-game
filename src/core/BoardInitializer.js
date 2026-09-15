@@ -4,8 +4,8 @@ const MATCH_REPAIR_ATTEMPTS = 200;
 const SHUFFLE_ATTEMPTS = 1000;
 /**
  * Подбирает случайные клетки без стартовых матчей и с допустимым ходом; заданные клетки сохраняет. При исчерпании попыток сообщает об ошибке.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @returns {void} Completes the operation.
+ * @param {import("../core/Game.js").Game} game - Текущая игровая сессия.
+ * @returns {void} Завершает операцию.
  */
 export function initializeBoard(game) {
   const fixed = new Set();
@@ -26,9 +26,9 @@ export function initializeBoard(game) {
       for (const group of matches) {
         const editable = group.cells.filter(
           /**
-           * Selects cells whose initial color may be repaired.
-           * @param {number} index - Row-major cell position.
-           * @returns {boolean} Callback result used by the enclosing operation.
+           * Выбирает клетки, цвет которых можно изменить при исправлении расстановки.
+           * @param {number} index - Индекс клетки в порядке строк.
+           * @returns {boolean} Результат проверки.
            */ (index) => !fixed.has(index),
         );
         if (!editable.length) throw new Error('Карта содержит неизбежный стартовый матч');
@@ -45,24 +45,24 @@ export function initializeBoard(game) {
 
 /**
  * Перемешивает фишки, при необходимости подбирает цвета заново; ящики неподвижны, завершение анимации обязательно.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @returns {Promise<void>} Completes the operation.
+ * @param {import("../core/Game.js").Game} game - Текущая игровая сессия.
+ * @returns {Promise<void>} Завершает операцию.
  */
 export async function shuffleBoard(game) {
   const ids = game.board
     .map(
       /**
-       * Selects gem indices while reserving obstacles.
-       * @param {import("../types.js").Cell} piece - Current element.
-       * @param {number} index - Row-major cell position.
-       * @returns {*} Callback result used by the enclosing operation.
+       * Выбирает индексы фишек, сохраняя ящики на месте.
+       * @param {import("../types.js").Cell} piece - Текущий элемент.
+       * @param {number} index - Индекс клетки в порядке строк.
+       * @returns {*} Результат callback-функции.
        */ (piece, index) => (piece?.kind === 'gem' ? index : -1),
     )
     .filter(
       /**
-       * Discards obstacle placeholders.
-       * @param {number} index - Row-major cell position.
-       * @returns {boolean} Callback result used by the enclosing operation.
+       * Отбрасывает позиции ящиков.
+       * @param {number} index - Индекс клетки в порядке строк.
+       * @returns {boolean} Результат проверки.
        */ (index) => index >= 0,
     );
   for (let attempt = 0; attempt < SHUFFLE_ATTEMPTS; attempt++) {

@@ -2,9 +2,9 @@ import { elementRules } from '../entities/Piece.js';
 const MAX_CASCADE_WAVES = 200;
 
 /**
- * Матчи разрешаются последовательно; предел каскадов защищает от бесконечной цепочки.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @returns {Promise<void>} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export async function resolveBoard(game) {
   let chain = 0;
@@ -18,11 +18,11 @@ export async function resolveBoard(game) {
 }
 
 /**
- * Checks session state, adjacency and whether both cells can be exchanged without changing the board.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @param {number} firstIndex - First cell index.
- * @param {number} secondIndex - Second cell index.
- * @returns {boolean} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @param {number} firstIndex - Параметр операции.
+ * @param {number} secondIndex - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export function canSwap(game, firstIndex, secondIndex) {
   return (
@@ -35,13 +35,13 @@ export function canSwap(game, firstIndex, secondIndex) {
 }
 
 /**
- * Сохраняет результат команды до финального события, чтобы интерфейс и интеграции
- * получили актуальную причину через снимок состояния.
- * @param {import('../core/Game.js').Game} game - Текущая игровая сессия.
- * @param {'swap'|'activate'} type - Тип команды.
- * @param {boolean} accepted - Была ли команда принята.
- * @param {string} reason - Стабильный код результата.
- * @returns {boolean} Значение результата публичной команды.
+ * Описание операции или проверяемого поведения.
+ * Описание операции или проверяемого поведения.
+ * @param {import('../core/Game.js').Game} game - Параметр операции.
+ * @param {'swap'|'activate'} type - Параметр операции.
+ * @param {boolean} accepted - Параметр операции.
+ * @param {string} reason - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 function recordCommand(game, type, accepted, reason) {
   game.lastCommand = { type, accepted, reason };
@@ -49,11 +49,11 @@ function recordCommand(game, type, accepted, reason) {
 }
 
 /**
- * Принятый обмен расходует один ход и ожидает каскады; недопустимый обмен возвращается без расхода хода.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @param {number} firstIndex - First cell index.
- * @param {number} secondIndex - Second cell index.
- * @returns {Promise<boolean>} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @param {number} firstIndex - Параметр операции.
+ * @param {number} secondIndex - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export async function resolveMove(game, firstIndex, secondIndex) {
   if (game.busy) return recordCommand(game, 'swap', false, 'BUSY');
@@ -69,9 +69,9 @@ export async function resolveMove(game, firstIndex, secondIndex) {
     const matches = game.findMatches();
     const hasBooster = [firstIndex, secondIndex].some(
       /**
-       * Detects a booster in the exchanged cells.
-       * @param {number} index - Row-major cell position.
-       * @returns {boolean} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @param {number} index - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (index) => game.board[index].kind === 'booster',
     );
     if (!hasBooster && !matches.length) {
@@ -92,12 +92,12 @@ export async function resolveMove(game, firstIndex, secondIndex) {
 }
 
 /**
- * Selects a match wave, single activation or booster combination for the accepted swap.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @param {number} firstIndex - First cell index.
- * @param {number} secondIndex - Second cell index.
- * @param {import("../types.js").Match[]} matches - Detected matches.
- * @returns {Promise<void>} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @param {number} firstIndex - Параметр операции.
+ * @param {number} secondIndex - Параметр операции.
+ * @param {import("../types.js").Match[]} matches - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 async function resolveSwap(game, firstIndex, secondIndex, matches) {
   const firstPiece = game.board[firstIndex];
@@ -116,10 +116,10 @@ async function resolveSwap(game, firstIndex, secondIndex, matches) {
 }
 
 /**
- * Consumes one move to activate a booster and finish its cascades; releases the busy flag even on failure.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @param {number} index - Row-major cell position.
- * @returns {Promise<boolean>} Result of the described operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @param {number} index - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export async function activateBooster(game, index) {
   if (game.busy) {
@@ -144,9 +144,9 @@ export async function activateBooster(game, index) {
 }
 
 /**
- * После каскадов ящики меняют цвет один раз; победа проверяется раньше поражения, затем восстанавливаются ходы.
- * @param {import("../core/Game.js").Game} game - Current game session.
- * @returns {Promise<void>} Completes the operation.
+ * Описание операции или проверяемого поведения.
+ * @param {import("../core/Game.js").Game} game - Параметр операции.
+ * @returns Результат выполнения операции.
  */
 export async function finishTurn(game) {
   await resolveBoard(game);
@@ -159,9 +159,9 @@ export async function finishTurn(game) {
   else if (
     !game.board.some(
       /**
-       * Detects a booster that can provide an activation without reshuffling.
-       * @param {import("../types.js").Cell} piece - Current element.
-       * @returns {boolean} Callback result used by the enclosing operation.
+       * Описание операции или проверяемого поведения.
+       * @param {import("../types.js").Cell} piece - Параметр операции.
+       * @returns Результат выполнения операции.
        */ (piece) => piece?.kind === 'booster',
     ) &&
     !game.legalMoves().length
