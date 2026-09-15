@@ -30,7 +30,7 @@ export class GameAnimations {
   }
 
   /** Обрабатывает снимок доменного события и ожидает завершения всей визуализации.
-   * @param {Object} event - Параметр операции.
+   * @param {import('../types.js').EngineEvent} event - Immutable engine event.
    * @param {import('../core/Game.js').Game} game - Параметр операции.
    * @param {function(): boolean} isCurrent - Параметр операции.
    * @returns Результат выполнения операции.
@@ -49,7 +49,7 @@ export class GameAnimations {
   }
 
   /** Animates tile relocation using their previous and next board coordinates.
-   * @param {Object} event - Параметр операции.
+   * @param {import('../types.js').SwapEvent|import('../types.js').InvalidEvent|import('../types.js').ShuffleEvent} event - Movement event.
    * @param {import('../core/Game.js').Game} game - Параметр операции.
    * @returns Результат выполнения операции.
    */
@@ -92,7 +92,7 @@ export class GameAnimations {
   }
 
   /** Эффекты бустеров идут по очереди до удаления; движок ждёт завершения всей последовательности.
-   * @param {Object} event - Параметр операции.
+   * @param {import('../types.js').RemoveEvent} event - Removal event.
    * @param {import('../core/Game.js').Game} game - Параметр операции.
    * @param {function(): boolean} isCurrent - Параметр операции.
    * @returns Результат выполнения операции.
@@ -152,7 +152,7 @@ export class GameAnimations {
   }
 
   /** Раскрывает содержимое, завершает падение выживших, затем запускает появление новых фишек в секциях.
-   * @param {Object} event - Параметр операции.
+   * @param {import('../types.js').FallEvent} event - Gravity event.
    * @param {import('../core/Game.js').Game} game - Параметр операции.
    * @param {function(): boolean} isCurrent - Параметр операции.
    * @returns Результат выполнения операции.

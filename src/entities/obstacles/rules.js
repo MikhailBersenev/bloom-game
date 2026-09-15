@@ -55,5 +55,9 @@ export const elementRules = new Map([
  * @returns Результат выполнения операции.
  */
 export function registerElement(type, rule) {
+  if (typeof type !== 'string' || !type) throw new TypeError('Element type is required');
+  if (!rule || typeof rule.canDamage !== 'function') {
+    throw new TypeError(`Element rule "${type}" must define canDamage`);
+  }
   elementRules.set(type, rule);
 }

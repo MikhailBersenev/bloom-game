@@ -2,7 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { Game, gem, box } from '../src/engine.js';
+import {
+  Game,
+  gem,
+  booster,
+  box,
+  combinationKey,
+  combinationStrategies,
+  createEngineEvent,
+  registerBoosterCombination,
+  registerElement,
+} from '../src/engine.js';
 import { levels } from '../src/levels.js';
 import { Board } from '../src/core/Board.js';
 import { calculateGravity } from '../src/core/Gravity.js';
@@ -135,5 +145,80 @@ test('ordinary column retains survivor order and legacy spawn order', () => {
       [-3, 1, true],
       [-4, 0, true],
     ],
+  );
+});
+
+test('engine events are validated, detached and deeply frozen', () => {
+  const piece = box('wood', 2, 0, gem(3));
+  const board = [piece];
+  const event = createEngineEvent('remove', board, {
+    removed: [0],
+    damaged: [0],
+    effects: [{ type: 'bomb', i: 0 }],
+    creations: [],
+  });
+
+  assert.equal(Object.isFrozen(event), true);
+  assert.equal(Object.isFrozen(event.board), true);
+  assert.equal(Object.isFrozen(event.board[0].contains), true);
+  assert.equal(Object.isFrozen(event.effects[0]), true);
+  assert.notEqual(event.board[0], piece);
+  assert.throws(() => (event.board[0].hp = 0), TypeError);
+  assert.equal(piece.hp, 2);
+
+  assert.throws(() => createEngineEvent('teleport', board), /Unknown engine event type/);
+  assert.throws(() => createEngineEvent('fall', board), /Missing field "falls"/);
+  assert.throws(() => createEngineEvent('ready', board, { extra: true }), /Unexpected field/);
+});
+
+test('combination registry normalizes keys and supports extensions without resolver changes', async () => {
+  const key = combinationKey('nova', 'line');
+  registerBoosterCombination('nova', 'line', ({ wave, b }) => {
+    wave.hitAll(wave.game.line(b, 'v'));
+    wave.effects.push({ type: 'nova', i: b });
+  });
+
+  try {
+    const game = new Game(
+      { rows: 5, cols: 5, colors: 5, moves: 5, goals: [{ key: 'color:0', count: 999 }] },
+      { random: randomSource(44) },
+    );
+    game.board[11] = booster('nova');
+    game.board[12] = booster('line');
+    let removal;
+    game.animate = async (event) => {
+      if (event.type === 'remove') removal = event;
+    };
+    await game.wave([], [], { a: 11, b: 12 });
+    assert.ok(removal.effects.some((effect) => effect.type === 'nova'));
+    assert.ok(removal.removed.includes(2));
+    assert.equal(combinationStrategies.has('line+nova'), true);
+  } finally {
+    combinationStrategies.delete(key);
+  }
+});
+
+test('unknown combinations are safely consumed and element rules require canDamage', async () => {
+  const game = new Game(
+    { rows: 5, cols: 5, colors: 5, moves: 5, goals: [{ key: 'color:0', count: 999 }] },
+    { random: randomSource(45) },
+  );
+  game.board[0] = booster('unknown-a');
+  game.board[1] = booster('unknown-b');
+  await game.wave([], [], { a: 0, b: 1 });
+  assert.equal(game.collected['booster:unknown-a'], 1);
+  assert.equal(game.collected['booster:unknown-b'], 1);
+  assert.throws(() => registerElement('invalid-rule', {}), /must define canDamage/);
+  assert.throws(
+    () =>
+      new Game({
+        rows: 3,
+        cols: 3,
+        colors: 3,
+        moves: 5,
+        goals: [],
+        map: [box('not-registered'), ...Array(8).fill('?')],
+      }),
+    /Unknown element type/,
   );
 });

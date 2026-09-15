@@ -8,6 +8,7 @@ import { calculateGravity } from './Gravity.js';
 import { gem, cloneElement } from '../entities/Piece.js';
 import { findMatches } from './MatchFinder.js';
 import { ResolutionWave } from './ResolutionWave.js';
+import { createEngineEvent } from '../types.js';
 
 /**
  * Описание операции или проверяемого поведения.
@@ -39,7 +40,7 @@ export class Game {
   /**
    * Описание операции или проверяемого поведения.
    * @param {import("../types.js").LevelConfig} level - Параметр операции.
-   * @param {Object} options - Параметр операции.
+   * @param {import('../types.js').GameOptions} options - Engine dependencies.
    * @returns Результат выполнения операции.
    */
   constructor(
@@ -237,25 +238,13 @@ export class Game {
 
   /**
    * Описание операции или проверяемого поведения.
-   * @param {string} type - Параметр операции.
-   * @param {Object} [extra={}] - Параметр операции.
+   * @param {import('../types.js').EngineEventType} type - Event discriminator.
+   * @param {Record<string, unknown>} [extra={}] - Event-specific payload.
    * @returns Результат выполнения операции.
    */
   async emit(type, extra = {}) {
-    await this.animate(
-      {
-        type,
-        board: this.board.map(
-          /**
-           * Описание операции или проверяемого поведения.
-           * @param {number} x - Параметр операции.
-           * @returns Результат выполнения операции.
-           */ (x) => (x ? { ...x } : null),
-        ),
-        ...extra,
-      },
-      this,
-    );
+    const event = createEngineEvent(type, this.board, extra);
+    await this.animate(event, this);
   }
 
   /**

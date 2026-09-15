@@ -1,4 +1,4 @@
-import { gem } from '../entities/Piece.js';
+import { gem, elementRules } from '../entities/Piece.js';
 const INITIAL_BOARD_ATTEMPTS = 500;
 const MATCH_REPAIR_ATTEMPTS = 200;
 const SHUFFLE_ATTEMPTS = 1000;
@@ -12,6 +12,7 @@ export function initializeBoard(game) {
   for (let index = 0; index < game.board.length; index++) {
     const cell = game.level.map?.[index];
     if (cell !== undefined && cell !== null && cell !== '?') {
+      validateElement(cell, index);
       game.board[index] = typeof cell === 'number' ? gem(cell) : game.clone(cell);
       fixed.add(index);
     }
@@ -41,6 +42,18 @@ export function initializeBoard(game) {
   }
 
   throw new Error('Не удалось создать игровое поле без матчей');
+}
+
+/**
+ * Rejects unregistered obstacle strategies before a level starts.
+ * @param {number|string|import('../types.js').Piece} item @param {number} index
+ */
+function validateElement(item, index) {
+  if (!item || typeof item !== 'object') return;
+  if (item.kind === 'box' && !elementRules.has(item.type)) {
+    throw new TypeError(`Unknown element type "${item.type}" at board index ${index}`);
+  }
+  if (item.contains) validateElement(item.contains, index);
 }
 
 /**
