@@ -1,0 +1,52 @@
+.tile[data-kind='box'] .piece-art {
+  width: 104%;
+  height: 104%;
+}
+.crate-cracks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+}
+.tile[data-durability='medium'] .crate-cracks {
+  opacity: 0.4;
+  clip-path: inset(0 43% 0 0);
+}
+.tile[data-durability='low'] .crate-cracks {
+  opacity: 1;
+}
+.hp {
+  position: absolute;
+  bottom: 13%;
+  left: 30%;
+  width: 40%;
+  border-radius: 6px;
+  background: #624221c9;
+  color: #fff4b1;
+  font-size: clamp(8px, 1vw, 12px);
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.1;
+  padding: 1px 0;
+  text-shadow: 0 1px 1px #3e2915;
+}
+.contains-badge {
+  position: absolute;
+  right: 8%;
+  top: 8%;
+  display: grid;
+  place-items: center;
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: #744292;
+  background: linear-gradient(white, #f8dda2);
+  border: 1px solid #ffeaa9;
+  font-size: 12px;
+  box-shadow: 0 2px 2px #65412980;
+}
+.tile[data-type='blocker'] .texture {
+  filter: saturate(0.6) drop-shadow(2px 4px 1px #092d38a0);
+}

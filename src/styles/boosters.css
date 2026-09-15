@@ -1,0 +1,75 @@
+.tile.is-booster .piece-art > .texture {
+  filter: saturate(1.25) drop-shadow(0 0 3px #fff49b90) drop-shadow(1px 4px 1px #092d3870);
+}
+.tile[data-type='rainbow'] .piece-art {
+  background: radial-gradient(ellipse, #ffe79650, transparent 65%);
+}
+.effect {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  pointer-events: none;
+}
+.effect-line {
+  inset: 0;
+  transform-origin: var(--x) var(--y);
+}
+.effect-line i,
+.effect-line b {
+  position: absolute;
+  box-shadow: 0 0 12px #ffd942;
+  background: linear-gradient(transparent, #ffe283, white, #ffe283, transparent);
+}
+.effect-line i {
+  top: var(--y);
+  left: 0;
+  width: 100%;
+  height: 7%;
+  transform: translateY(-50%);
+}
+.effect-line b {
+  left: var(--x);
+  top: 0;
+  width: 7%;
+  height: 100%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, #ffe283, white, #ffe283, transparent);
+}
+.effect-line.h b,
+.effect-line.v i {
+  display: none;
+}
+.effect-line.large i {
+  height: 30%;
+}
+.effect-line.large b {
+  width: 30%;
+}
+.effect-bomb,
+.effect-rainbow,
+.effect-impact {
+  width: var(--area, 18%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 5px solid #ffe991;
+  background: radial-gradient(circle, #fff9c7d9, #ffb93970, transparent 68%);
+  box-shadow: 0 0 25px #ffe275;
+}
+.effect-rainbow {
+  width: 145%;
+  border: 5px solid #fff5d9;
+  background: conic-gradient(#ff6b947d, #ffe57591, #a3f4889c, #6fdfff8c, #b97cff88, #ff6b947d);
+}
+.effect-plane {
+  width: 13%;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 0 7px #ffec8f);
+}
+.effect-plane .texture {
+  width: 100%;
+  height: 100%;
+}
+.effect-impact {
+  width: 18%;
+}

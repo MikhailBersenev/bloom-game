@@ -1,0 +1,25 @@
+:root {
+  --glass-surface: linear-gradient(135deg, #ffffffa8, #ffffff40 48%, #e8fff366);
+  --glass-border: #ffffffb8;
+  --glass-shadow:
+    inset 1px 1px 1px #fffffff2, inset -1px -1px 1px #ffffff70, 0 8px 24px #24594e16,
+    0 2px 3px #24594e12;
+  --glass-filter: blur(14px) saturate(135%);
+  --ink: #164b57;
+  --muted: #4a7078;
+  --teal: #147e84;
+  --cream: #fff8df;
+  --gold: #ffd766;
+  --board-dark: #1d5964;
+  --board-light: #246572;
+  --radius-small: 10px;
+  --radius-medium: 18px;
+  --radius-large: 30px;
+  --shadow-small: 0 4px 0 #b0cec5, 0 7px 12px #15495412;
+  --shadow-medium: 0 6px 0 #b2c8ae, 0 16px 28px #174d5324;
+  --shadow-large: 0 11px 0 #b18443, 0 22px 0 #39696718, 0 30px 48px #174e5340;
+  --animation-fast: 160ms;
+  --animation-normal: 280ms;
+  --board-depth: 9px;
+  --page-width: 1360px;
+}

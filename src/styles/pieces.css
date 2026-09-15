@@ -1,0 +1,25 @@
+.piece-art {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: transform var(--animation-fast);
+  transform-origin: center 65%;
+}
+.piece-art > .texture {
+  width: 100%;
+  height: 100%;
+  filter: saturate(1.13) drop-shadow(1px 3px 2px #092d3845);
+}
+@media (hover: hover) {
+  .tile:hover .piece-art {
+    transform: translateY(-2px) scale(1.04);
+  }
+}
+.tile.selected .piece-art {
+  transform: translateY(-3px) scale(1.06);
+}
+.tile:active .piece-art {
+  transform: translateY(2px) scale(0.96);
+}

@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+* {
+  box-sizing: border-box;
+}
+:root {
+  font-family: 'Manrope', system-ui, sans-serif;
+  color: var(--ink);
+  background: #c8e8df;
+  font-synthesis: none;
+}
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+button,
+select {
+  font: inherit;
+  color: inherit;
+}
+button,
+a,
+select,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+summary {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: wait;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button:focus-visible,
+select:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #bf4c19;
+  outline-offset: 4px;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+p {
+  line-height: 1.65;
+}
+.texture {
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+.landscape {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% -5%, #fffce4 0, #e1f4e3 24%, transparent 60%),
+    radial-gradient(ellipse at 110% 55%, #9acfc9, transparent 60%),
+    linear-gradient(155deg, #d4f2e8, #bfdfd5);
+}
+.landscape::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#fff9 1px, transparent 1.5px);
+  background-size: 28px 28px;
+  opacity: 0.27;
+  mask-image: linear-gradient(transparent, #000);
+}
+.sun {
+  position: absolute;
+  width: 430px;
+  aspect-ratio: 1;
+  background: #fff4b966;
+  filter: blur(60px);
+  left: -190px;
+  top: 80px;
+  border-radius: 50%;
+}
+.hill {
+  position: absolute;
+  width: 120%;
+  height: 270px;
+  bottom: -180px;
+  left: -35%;
+  border-radius: 50%;
+  background: #83bca599;
+  transform: rotate(8deg);
+}
+.hill.front {
+  left: 25%;
+  bottom: -200px;
+  background: #6daaa08c;
+  transform: rotate(-10deg);
+}
+.plant {
+  display: none;
+}
+.eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  color: #497573;
+}

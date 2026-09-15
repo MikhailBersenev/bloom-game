@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#c8e8df" />
+    <title>Bloom — садовая Match-3</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="landscape" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="hill back"></div>
+      <div class="hill front"></div>
+      <div class="plant p1">❧</div>
+      <div class="plant p2">❧</div>
+    </div>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Bloom, главная"
+        ><span class="brand-mark">✿</span> bloom<span class="brand-dot">.</span></a
+      ><span class="edition">ВАША МАЛЕНЬКАЯ САДОВАЯ ИСТОРИЯ</span>
+      <div class="header-actions">
+        <button id="sound" class="icon-button" aria-label="Включить звук" title="Звук">♫</button
+        ><button id="help" class="icon-button" aria-label="Правила игры" title="Правила">?</button>
+      </div>
+    </header>
+    <main class="layout">
+      <aside class="journey">
+        <div class="eyebrow">ВРЕМЯ РАСЦВЕТАТЬ</div>
+        <h1>Маленький сад.<br /><em>Большие чудеса.</em></h1>
+        <p class="intro">
+          Соединяйте фишки, открывайте новые уголки и создавайте свой цветущий мир.
+        </p>
+        <div class="journey-head">
+          <span>Ваше путешествие</span><span id="journey-count">01 / 10</span>
+        </div>
+        <nav id="level-map" aria-label="Карта уровней"></nav>
+        <div class="journey-footer">
+          <span>✧</span>
+          <p>Не спешите. У каждого<br />цветка своё время.</p>
+        </div>
+      </aside>
+      <section class="play-section" aria-label="Игра Match-3">
+        <div class="level-heading">
+          <div>
+            <div class="eyebrow" id="level-number">УРОВЕНЬ 01</div>
+            <h2 id="level-name">Первый росток</h2>
+          </div>
+          <button
+            id="restart"
+            class="icon-button"
+            title="Начать заново"
+            aria-label="Начать уровень заново"
+          >
+            ↻
+          </button>
+        </div>
+        <div class="game-shell">
+          <div class="hud">
+            <div class="moves-block"><strong id="moves">24</strong><span>ХОДЫ</span></div>
+            <div class="goals-area">
+              <span class="hud-label">ЦЕЛИ УРОВНЯ</span>
+              <div id="goals"></div>
+            </div>
+            <div class="score-block">
+              <span class="hud-label">ОЧКИ</span><strong id="score">0</strong>
+            </div>
+          </div>
+          <div class="board-frame">
+            <div id="board" role="grid" aria-label="Игровое поле"></div>
+            <div id="effects" aria-hidden="true"></div>
+            <div id="toast" role="status"></div>
+          </div>
+          <div class="board-caption">
+            <span class="tiny-flower">✿</span><span id="level-subtitle"></span>
+          </div>
+        </div>
+        <div class="below-board">
+          <span><i class="status-dot"></i> <span id="game-status">Ваш ход</span></span
+          ><button id="hint">✧ Подсказка</button>
+        </div>
+      </section>
+      <aside class="right-panel">
+        <div class="booster-guide">
+          <div class="eyebrow">НЕМНОГО МАГИИ</div>
+          <h3>Больше, чем три</h3>
+          <p>Собирайте особые комбинации<br />для маленьких чудес.</p>
+          <div id="booster-guide-list"></div>
+          <div class="combo-tip">
+            <span>✦</span>
+            <p>
+              <strong>Вместе — сильнее</strong>Поменяйте местами два бустера и посмотрите, что
+              получится.
+            </p>
+          </div>
+        </div>
+        <details class="cheat-panel" open>
+          <summary>
+            <span>⌘ &nbsp; Режим тестирования</span><span class="dev-badge">DEV</span>
+          </summary>
+          <label for="level-select">Перейти к уровню</label>
+          <div class="select-row">
+            <select id="level-select"></select
+            ><button id="level-go" aria-label="Перейти к выбранному уровню">→</button>
+          </div>
+          <div class="cheat-buttons">
+            <button id="cheat-win">✓ Победа</button><button id="cheat-lose">× Поражение</button>
+          </div>
+        </details>
+      </aside>
+    </main>
+    <footer class="page-footer">
+      <span>СОЗДАНО ДЛЯ МАЛЕНЬКИХ ПЕРЕРЫВОВ</span
+      ><span>Растите в своём ритме <span class="leaf">❧</span></span>
+    </footer>
+    <dialog id="modal"><div id="modal-content"></div></dialog>
+    <script type="module" src="/src/app.js"></script>
+  </body>
+</html>

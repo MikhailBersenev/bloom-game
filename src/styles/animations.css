@@ -1,0 +1,41 @@
+.tile.hint::before {
+  animation: hint-glow 0.65s ease-in-out 3;
+}
+.tile.selected::before {
+  animation: selected-glow 1.6s ease-in-out 2;
+}
+.arriving .piece-art {
+  animation: arrival 0.44s cubic-bezier(0.25, 0.8, 0.4, 1) both;
+}
+@keyframes hint-glow {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes selected-glow {
+  50% {
+    opacity: 0.55;
+  }
+}
+@keyframes arrival {
+  from {
+    transform: translateY(-450px) scale(0.9);
+  }
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 25ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 25ms !important;
+    animation-delay: 0s !important;
+  }
+}

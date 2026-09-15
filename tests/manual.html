@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+  <meta charset="utf-8" />
+  <title>Регрессионные сценарии Bloom</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <style>
+    body {
+      display: block;
+      padding: 24px;
+    }
+    main {
+      max-width: 560px;
+      margin: auto;
+    }
+    button,
+    select {
+      padding: 8px;
+      margin: 4px;
+    }
+    #board .tile {
+      margin: 0;
+      padding: 1px;
+    }
+    #report {
+      white-space: pre-wrap;
+    }
+  </style>
+  <main>
+    <h1>Регрессионные сценарии Bloom</h1>
+    <p>
+      Используются настоящий движок и анимации игры. Переключатель эмулирует системный reduced
+      motion только на этой странице.
+    </p>
+    <label><input id="reduced" type="checkbox" /> Reduced motion</label>
+    <button id="run">Запустить все сценарии</button>
+    <h2 id="scenario">Готово к запуску</h2>
+    <div class="board-frame">
+      <div id="board" style="--rows: 7; --cols: 7"></div>
+      <div id="effects"></div>
+    </div>
+    <p id="toast"></p>
+    <pre id="report" aria-live="polite"></pre>
+  </main>
+  <script type="module" src="./manual.js"></script>
+</html>
