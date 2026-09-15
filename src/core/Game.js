@@ -9,6 +9,20 @@ import { gem, cloneElement } from '../entities/Piece.js';
 import { findMatches } from './MatchFinder.js';
 import { ResolutionWave } from './ResolutionWave.js';
 
+/**
+ * Рекурсивно копирует и замораживает данные снимка, чтобы внешнее изменение
+ * уровня или вложенного элемента не могло повлиять на игровую сессию.
+ * @param {*} value - Значение из текущего состояния игры.
+ * @returns {*} Независимая неизменяемая копия.
+ */
+function frozenCopy(value) {
+  if (value === null || typeof value !== 'object') return value;
+  if (Array.isArray(value)) return Object.freeze(value.map(frozenCopy));
+  return Object.freeze(
+    Object.fromEntries(Object.entries(value).map(([key, item]) => [key, frozenCopy(item)])),
+  );
+}
+
 /** Public session facade: owns counters and composes domain operations through an injected async event sink. */
 export class Game {
   /**
@@ -38,6 +52,7 @@ export class Game {
     this.busy = false;
     this.status = 'playing';
     this.turn = 0;
+    this.lastCommand = null;
     this.field = new Board(this.rows, this.cols);
     this.initialize();
   }
@@ -48,6 +63,27 @@ export class Game {
    */
   get board() {
     return this.field.cells;
+  }
+
+  /**
+   * Возвращает независимый неизменяемый снимок состояния для интерфейса и интеграций.
+   * Изменять живую игровую сессию можно только через её команды.
+   * @returns {Object} Независимый снимок состояния.
+   */
+  getSnapshot() {
+    return Object.freeze({
+      level: frozenCopy(this.level),
+      rows: this.rows,
+      cols: this.cols,
+      board: frozenCopy(this.board),
+      moves: this.moves,
+      score: this.score,
+      collected: frozenCopy(this.collected),
+      status: this.status,
+      busy: this.busy,
+      turn: this.turn,
+      lastCommand: frozenCopy(this.lastCommand),
+    });
   }
 
   /**

@@ -35,6 +35,20 @@ export function canSwap(game, firstIndex, secondIndex) {
 }
 
 /**
+ * Сохраняет результат команды до финального события, чтобы интерфейс и интеграции
+ * получили актуальную причину через снимок состояния.
+ * @param {import('../core/Game.js').Game} game - Текущая игровая сессия.
+ * @param {'swap'|'activate'} type - Тип команды.
+ * @param {boolean} accepted - Была ли команда принята.
+ * @param {string} reason - Стабильный код результата.
+ * @returns {boolean} Значение результата публичной команды.
+ */
+function recordCommand(game, type, accepted, reason) {
+  game.lastCommand = { type, accepted, reason };
+  return accepted;
+}
+
+/**
  * Принятый обмен расходует один ход и ожидает каскады; недопустимый обмен возвращается без расхода хода.
  * @param {import("../core/Game.js").Game} game - Current game session.
  * @param {number} firstIndex - First cell index.
@@ -42,7 +56,12 @@ export function canSwap(game, firstIndex, secondIndex) {
  * @returns {Promise<boolean>} Result of the described operation.
  */
 export async function resolveMove(game, firstIndex, secondIndex) {
-  if (!canSwap(game, firstIndex, secondIndex)) return false;
+  if (game.busy) return recordCommand(game, 'swap', false, 'BUSY');
+  if (game.status !== 'playing') return recordCommand(game, 'swap', false, 'INVALID_STATUS');
+  if (!game.adjacent(firstIndex).includes(secondIndex))
+    return recordCommand(game, 'swap', false, 'NOT_ADJACENT');
+  if (!game.movable(firstIndex) || !game.movable(secondIndex))
+    return recordCommand(game, 'swap', false, 'IMMOVABLE');
   game.busy = true;
   try {
     game.field.swap(firstIndex, secondIndex);
@@ -57,12 +76,14 @@ export async function resolveMove(game, firstIndex, secondIndex) {
     );
     if (!hasBooster && !matches.length) {
       game.field.swap(firstIndex, secondIndex);
+      recordCommand(game, 'swap', false, 'NO_MATCH');
       await game.emit('invalid');
       return false;
     }
     game.moves--;
     game.preferred = [secondIndex, firstIndex];
     await resolveSwap(game, firstIndex, secondIndex, matches);
+    recordCommand(game, 'swap', true, 'SUCCESS');
     await finishTurn(game);
     return true;
   } finally {
@@ -101,11 +122,20 @@ async function resolveSwap(game, firstIndex, secondIndex, matches) {
  * @returns {Promise<boolean>} Result of the described operation.
  */
 export async function activateBooster(game, index) {
-  if (game.busy || game.status !== 'playing' || game.board[index]?.kind !== 'booster') return false;
+  if (game.busy) {
+    return recordCommand(game, 'activate', false, 'BUSY');
+  }
+  if (game.status !== 'playing') {
+    return recordCommand(game, 'activate', false, 'INVALID_STATUS');
+  }
+  if (game.board[index]?.kind !== 'booster') {
+    return recordCommand(game, 'activate', false, 'NOT_BOOSTER');
+  }
   game.busy = true;
   try {
     game.moves--;
     await game.wave([], [{ i: index }]);
+    recordCommand(game, 'activate', true, 'SUCCESS');
     await finishTurn(game);
     return true;
   } finally {

@@ -2,6 +2,145 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game, gem, booster, box, registerElement } from '../src/engine.js';
 import { levels } from '../src/levels.js';
+
+test('snapshot is detached and command failures expose a reason', async () => {
+  const game = new Game(levels[0], { random: rng(1) });
+  const snapshot = game.getSnapshot();
+  const originalId = snapshot.board.find(Boolean).id;
+
+  assert.equal(Object.isFrozen(snapshot), true);
+  assert.equal(Object.isFrozen(snapshot.board), true);
+  assert.equal(Object.isFrozen(snapshot.collected), true);
+  assert.equal(game.board[0] === null, false);
+  assert.equal(game.collected.extra, undefined);
+  assert.equal(game.getSnapshot().board.find(Boolean).id, originalId);
+
+  const result = await game.swap(0, 2);
+  assert.equal(result, false);
+  assert.equal(game.lastCommand.accepted, false);
+  assert.equal(typeof game.lastCommand.reason, 'string');
+});
+
+test('snapshot level, goals, map and nested contents cannot mutate the live session', () => {
+  const level = structuredClone(levels[9]);
+  const game = new Game(level, { random: rng(7) });
+  const snapshot = game.getSnapshot();
+  const nestedIndex = snapshot.board.findIndex((item) => item?.contains);
+  const liveBefore = {
+    moves: game.level.moves,
+    goalCount: game.level.goals[0].count,
+    mapCell: structuredClone(game.level.map[0]),
+    nestedHp: game.board[nestedIndex].contains.hp,
+  };
+
+  assert.notEqual(snapshot.level, game.level);
+  assert.equal(Object.isFrozen(snapshot.level), true);
+  assert.equal(Object.isFrozen(snapshot.level.goals), true);
+  assert.equal(Object.isFrozen(snapshot.level.goals[0]), true);
+  assert.equal(Object.isFrozen(snapshot.level.map), true);
+  assert.equal(Object.isFrozen(snapshot.board[nestedIndex].contains), true);
+
+  assert.throws(() => {
+    snapshot.level.moves = 999;
+  }, TypeError);
+  assert.throws(() => {
+    snapshot.level.goals[0].count = 999;
+  }, TypeError);
+  assert.throws(() => {
+    snapshot.level.map[0] = null;
+  }, TypeError);
+  assert.throws(() => {
+    snapshot.board[nestedIndex].contains.hp = 999;
+  }, TypeError);
+
+  assert.equal(game.level.moves, liveBefore.moves);
+  assert.equal(game.level.goals[0].count, liveBefore.goalCount);
+  assert.deepEqual(game.level.map[0], liveBefore.mapCell);
+  assert.equal(game.board[nestedIndex].contains.hp, liveBefore.nestedHp);
+});
+
+test('swap exposes exact diagnostic reasons and publishes the result before final events', async () => {
+  const expectSwap = async (prepare, indices, expected) => {
+    const game = fixture();
+    prepare(game);
+    const result = await game.swap(...indices);
+    assert.equal(result, expected.accepted);
+    assert.deepEqual(game.lastCommand, { type: 'swap', ...expected });
+  };
+
+  await expectSwap((game) => (game.busy = true), [0, 1], {
+    accepted: false,
+    reason: 'BUSY',
+  });
+  await expectSwap((game) => (game.status = 'lost'), [0, 1], {
+    accepted: false,
+    reason: 'INVALID_STATUS',
+  });
+  await expectSwap(() => {}, [0, 2], { accepted: false, reason: 'NOT_ADJACENT' });
+  await expectSwap((game) => (game.board[1] = box()), [0, 1], {
+    accepted: false,
+    reason: 'IMMOVABLE',
+  });
+
+  const invalid = fixture();
+  let invalidEventCommand;
+  invalid.animate = async (event) => {
+    if (event.type === 'invalid') invalidEventCommand = invalid.getSnapshot().lastCommand;
+  };
+  assert.equal(await invalid.swap(0, 1), false);
+  assert.deepEqual(invalidEventCommand, {
+    type: 'swap',
+    accepted: false,
+    reason: 'NO_MATCH',
+  });
+
+  const valid = fixture();
+  put(valid, [14, 15, 23]);
+  valid.board[16] = gem(1);
+  let readyEventCommand;
+  valid.animate = async (event) => {
+    if (event.type === 'ready') readyEventCommand = valid.getSnapshot().lastCommand;
+  };
+  assert.equal(await valid.swap(16, 23), true);
+  assert.deepEqual(readyEventCommand, { type: 'swap', accepted: true, reason: 'SUCCESS' });
+});
+
+test('booster activation exposes every diagnostic reason before the ready event', async () => {
+  const busy = fixture();
+  busy.busy = true;
+  assert.equal(await busy.activate(0), false);
+  assert.deepEqual(busy.lastCommand, { type: 'activate', accepted: false, reason: 'BUSY' });
+
+  const stopped = fixture();
+  stopped.status = 'lost';
+  assert.equal(await stopped.activate(0), false);
+  assert.deepEqual(stopped.lastCommand, {
+    type: 'activate',
+    accepted: false,
+    reason: 'INVALID_STATUS',
+  });
+
+  const ordinary = fixture();
+  assert.equal(await ordinary.activate(0), false);
+  assert.deepEqual(ordinary.lastCommand, {
+    type: 'activate',
+    accepted: false,
+    reason: 'NOT_BOOSTER',
+  });
+
+  const valid = fixture();
+  valid.board[0] = booster('line');
+  let readyEventCommand;
+  valid.animate = async (event) => {
+    if (event.type === 'ready') readyEventCommand = valid.getSnapshot().lastCommand;
+  };
+  assert.equal(await valid.activate(0), true);
+  assert.deepEqual(readyEventCommand, {
+    type: 'activate',
+    accepted: true,
+    reason: 'SUCCESS',
+  });
+});
 function rng(seed = 17) {
   return () => {
     seed = (seed * 1664525 + 1013904223) >>> 0;

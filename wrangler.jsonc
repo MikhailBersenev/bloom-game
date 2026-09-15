@@ -3,12 +3,12 @@
   "name": "match3",
   "compatibility_date": "2026-09-15",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
   },
   "observability": {
     "enabled": true,
     "traces": {
-      "enabled": true
-    }
-  }
+      "enabled": true,
+    },
+  },
 }
