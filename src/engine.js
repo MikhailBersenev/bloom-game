@@ -1,4 +1,3 @@
-// Описание совместимости и назначения модуля.
 export { Game } from './core/Game.js';
 export {
   COLORS,

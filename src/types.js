@@ -1,48 +1,48 @@
 /**
- * Описание операции или проверяемого поведения.
+ * Общие типы движка. Индекс клетки считается построчно, индексы цветов начинаются с нуля.
  * @typedef {{row: number, col: number}} Position
  * @typedef {'h'|'v'} Axis
  * @typedef {'line'|'bomb'|'plane'|'rainbow'} BoosterType
  * @typedef {Object} Piece
- * @property {'gem'|'booster'|'box'} kind - Свойство структуры.
- * @property {number} id - Свойство структуры.
- * @property {number} [color] - Свойство структуры.
- * @property {string} [type] - Свойство структуры.
- * @property {Axis} [axis] - Свойство структуры.
- * @property {number} [hp] - Свойство структуры.
- * @property {Piece|null} [contains] - Свойство структуры.
+ * @property {'gem'|'booster'|'box'} kind - Категория элемента на поле.
+ * @property {number} id - Уникальный идентификатор экземпляра для отслеживания анимаций.
+ * @property {number} [color] - Индекс цвета фишки или ящика.
+ * @property {string} [type] - Тип бустера или правило ящика в реестре.
+ * @property {Axis} [axis] - Направление линейного бустера.
+ * @property {number} [hp] - Оставшиеся жизни ящика.
+ * @property {Piece|null} [contains] - Содержимое, раскрываемое после разрушения ящика.
  * @typedef {Piece|null} Cell
  * @typedef {{cells: number[], axis: 'h'|'v'|'square'}} MatchPattern
  * @typedef {{cells: number[], patterns: MatchPattern[], color: number, type: BoosterType|null, axis: Axis}} Match
  * @typedef {[number, number]} Move
  * @typedef {{type: string, i: number, axis?: string, target?: number, large?: boolean, label?: string}} BoosterEffect
  * @typedef {Object} GravityMove
- * @property {number} id - Свойство структуры.
- * @property {number} from - Свойство структуры.
- * @property {number} to - Свойство структуры.
- * @property {number} col - Свойство структуры.
- * @property {boolean} spawn - Свойство структуры.
- * @property {number} segmentTop - Свойство структуры.
- * @property {number} segmentBottom - Свойство структуры.
+ * @property {number} id - Идентификатор фишки.
+ * @property {number} from - Начальная строка; для новых фишек источник выше границы своей секции.
+ * @property {number} to - Конечная строка.
+ * @property {number} col - Столбец.
+ * @property {boolean} spawn - Новая фишка, ожидающая отдельной фазы появления.
+ * @property {number} segmentTop - Верхняя свободная строка; граница видимости при появлении.
+ * @property {number} segmentBottom - Нижняя свободная строка.
  * @typedef {{key: string, count: number}} GoalConfig
  * @typedef {Object} LevelConfig
- * @property {number} rows - Свойство структуры.
- * @property {number} cols - Свойство структуры.
- * @property {number} colors - Свойство структуры.
- * @property {number} moves - Свойство структуры.
- * @property {GoalConfig[]} goals - Свойство структуры.
- * @property {Array<number|string|Piece|null>} [map] - Свойство структуры.
- * @property {Array<[number, number, Piece|number]>} [placements] - Свойство структуры.
- * @property {number} [id] - Свойство структуры.
- * @property {string} [name] - Свойство структуры.
- * @property {string} [subtitle] - Свойство структуры.
+ * @property {number} rows - Высота поля в клетках.
+ * @property {number} cols - Ширина поля в клетках.
+ * @property {number} colors - Количество доступных цветов.
+ * @property {number} moves - Начальный запас ходов.
+ * @property {GoalConfig[]} goals - Все цели, необходимые для победы.
+ * @property {Array<number|string|Piece|null>} [map] - Построчная карта: число задаёт цвет, '?' или null означают случайную фишку.
+ * @property {Array<[number, number, Piece|number]>} [placements] - Заданные клетки шаблона в формате [строка, столбец, элемент].
+ * @property {number} [id] - Номер уровня.
+ * @property {string} [name] - Название в интерфейсе.
+ * @property {string} [subtitle] - Описание уровня.
  * @typedef {{i: number, color?: number|null}} Activation
  * @typedef {{a: number, b: number}} Combination
  *
- * Engine events follow this lifecycle:
- * `swap -> remove -> fall -> cascade (optional, repeated) -> ready`.
- * `invalid` replaces the resolution phases for a rejected swap, while `shuffle`
- * may occur before `ready`. Every event is a detached, deeply frozen snapshot.
+ * Последовательность событий принятого обмена:
+ * `swap → remove → fall → (cascade → remove → fall)* → ready`.
+ * При отклонённом обмене после `swap` приходит `invalid`; перед `ready` возможно
+ * событие `shuffle`. Каждое событие — независимый, глубоко замороженный снимок.
  *
  * @typedef {Readonly<{type: string, board: ReadonlyArray<Cell>} & Record<string, unknown>>} BaseEngineEvent
  * @typedef {BaseEngineEvent & Readonly<{type: 'swap'}>} SwapEvent
@@ -81,8 +81,9 @@ function frozenCopy(value) {
 }
 
 /**
- * Creates and validates the immutable boundary object consumed by UI adapters.
- * @param {string} type @param {Cell[]} board
+ * Проверяет поля события и создаёт неизменяемый снимок для адаптеров интерфейса.
+ * @param {string} type - Тип события из ENGINE_EVENT_TYPES.
+ * @param {Cell[]} board - Состояние поля для копирования.
  * @param {Record<string, unknown>} [payload]
  * @returns {EngineEvent}
  */

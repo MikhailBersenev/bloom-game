@@ -45,7 +45,7 @@ export function initializeBoard(game) {
 }
 
 /**
- * Rejects unregistered obstacle strategies before a level starts.
+ * Проверяет регистрацию ящиков и всего вложенного содержимого до запуска уровня.
  * @param {number|string|import('../types.js').Piece} item @param {number} index
  */
 function validateElement(item, index) {

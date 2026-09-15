@@ -5,9 +5,8 @@ import { icon, itemLabel } from './presentation.js';
 /** Отображает снимки состояния и не изменяет состояние движка. */
 export class GameView {
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {Document} [root] - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {Document} [root]
+   * @returns {void}
    */
   constructor(root = document) {
     this.root = root;
@@ -19,9 +18,8 @@ export class GameView {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {string} text - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {string} text
+   * @returns {void}
    */
   toast(text) {
     this.root.querySelector('#toast').textContent = text;
@@ -29,28 +27,25 @@ export class GameView {
     clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(
       /**
-       * Описание операции или проверяемого поведения.
-       * @returns Результат выполнения операции.
+       * @returns {*}
        */ () => this.root.querySelector('#toast').classList.remove('visible'),
       1700,
     );
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../core/Game.js").Game} game - Параметр операции.
-   * @param {number|null} [selected] - Параметр операции.
-   * @param {import("../types.js").Cell[]} [state] - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import("../core/Game.js").Game} game
+   * @param {number|null} [selected]
+   * @param {import("../types.js").Cell[]} [state]
+   * @returns {void}
    */
   draw(game, selected = null, state = game.board) {
     const liveIds = new Set();
     state.forEach(
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {import("../types.js").Cell} item - Параметр операции.
-       * @param {number} index - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {import("../types.js").Cell} item
+       * @param {number} index
+       * @returns {void}
        */ (item, index) => {
         if (!item) return;
         liveIds.add(String(item.id));
@@ -97,8 +92,8 @@ export class GameView {
   }
 
   /** Создаёт индикаторы прочности и скрытого содержимого без изменения ящика.
-   * @param {import('../types.js').Piece} item - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import('../types.js').Piece} item
+   * @returns {string}
    */
   obstacleDetails(item) {
     if (item.kind !== 'box' || item.type === 'blocker') return '';
@@ -108,29 +103,26 @@ export class GameView {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../core/Game.js").Game} game - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import("../core/Game.js").Game} game
+   * @returns {void}
    */
   hud(game) {
     this.hudView.hud(game);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../types.js").LevelConfig[]} levels - Параметр операции.
-   * @param {number} index - Параметр операции.
-   * @param {number} unlocked - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import("../types.js").LevelConfig[]} levels
+   * @param {number} index
+   * @param {number} unlocked
+   * @returns {void}
    */
   renderMap(levels, index, unlocked) {
     this.root.querySelector('#level-map').innerHTML = levels
       .map(
         /**
-         * Описание операции или проверяемого поведения.
-         * @param {import("../types.js").LevelConfig} level - Параметр операции.
-         * @param {number} position - Параметр операции.
-         * @returns Результат выполнения операции.
+         * @param {import("../types.js").LevelConfig} level
+         * @param {number} position
+         * @returns {*}
          */ (level, position) => {
           const current = position === index;
           const passed = position + 1 < unlocked;
@@ -153,10 +145,9 @@ export class GameView {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../core/Game.js").Game} game - Параметр операции.
-   * @param {number} index - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import("../core/Game.js").Game} game
+   * @param {number} index
+   * @returns {void}
    */
   prepareLevel(game, index) {
     clearTimeout(this.toastTimer);

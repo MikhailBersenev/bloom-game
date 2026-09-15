@@ -25,12 +25,11 @@ const OUTCOMES = {
 };
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {HTMLDialogElement} modal - Параметр операции.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @param {boolean} last - Параметр операции.
- * @param {function(): *} onContinue - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {HTMLDialogElement} modal
+ * @param {import("../core/Game.js").Game} game
+ * @param {boolean} last
+ * @param {function(): *} onContinue
+ * @returns {void}
  */
 export function showResult(modal, game, last, onContinue) {
   const outcome = game.status === 'won' && last ? 'completed' : game.status;
@@ -57,9 +56,8 @@ const RULES = [
 ];
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {HTMLDialogElement} modal - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {HTMLDialogElement} modal
+ * @returns {void}
  */
 export function showHelp(modal) {
   modal.querySelector('#modal-content').innerHTML = `
@@ -69,10 +67,9 @@ export function showHelp(modal) {
     <div class="rules">
       ${RULES.map(
         /**
-         * Описание операции или проверяемого поведения.
-         * @param {*} rule - Параметр операции.
-         * @param {number} index - Параметр операции.
-         * @returns Результат выполнения операции.
+         * @param {*} rule
+         * @param {number} index
+         * @returns {*}
          */ (rule, index) => `<p><b>${index + 1}.</b> ${rule}</p>`,
       ).join('')}
     </div>
@@ -81,16 +78,15 @@ export function showHelp(modal) {
   modal.showModal();
   for (const button of modal.querySelectorAll('.modal-close')) {
     button.onclick = /**
-     * Closes the help dialog.
-     * @returns {*} Callback result used by the enclosing operation.
+     * Закрывает диалог правил.
+     * @returns {*} Результат обработчика.
      */ () => modal.close();
   }
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {HTMLElement} container - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {HTMLElement} container
+ * @returns {void}
  */
 export function renderGuide(container) {
   const guide = [
@@ -102,9 +98,8 @@ export function renderGuide(container) {
   container.innerHTML = guide
     .map(
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {*} entry0 - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {*} entry0
+       * @returns {*}
        */ ([type, title, description]) => `
     <div class="guide-item">
       <div class="guide-icon">${icon({ kind: 'booster', type })}</div>

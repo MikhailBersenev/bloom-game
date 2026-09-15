@@ -2,9 +2,9 @@ import { elementRules } from '../entities/Piece.js';
 const MAX_CASCADE_WAVES = 200;
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @returns Результат выполнения операции.
+ * Матчи разрешаются последовательно; предел каскадов защищает от бесконечной цепочки.
+ * @param {import("../core/Game.js").Game} game
+ * @returns {Promise<void>}
  */
 export async function resolveBoard(game) {
   let chain = 0;
@@ -18,11 +18,10 @@ export async function resolveBoard(game) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @param {number} firstIndex - Параметр операции.
- * @param {number} secondIndex - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {import("../core/Game.js").Game} game
+ * @param {number} firstIndex
+ * @param {number} secondIndex
+ * @returns {boolean}
  */
 export function canSwap(game, firstIndex, secondIndex) {
   return (
@@ -35,13 +34,13 @@ export function canSwap(game, firstIndex, secondIndex) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * Описание операции или проверяемого поведения.
- * @param {import('../core/Game.js').Game} game - Параметр операции.
- * @param {'swap'|'activate'} type - Параметр операции.
- * @param {boolean} accepted - Параметр операции.
- * @param {string} reason - Параметр операции.
- * @returns Результат выполнения операции.
+ * Сохраняет результат команды до финального события, чтобы интерфейс и интеграции
+ * получили актуальную причину через снимок состояния.
+ * @param {import('../core/Game.js').Game} game - Текущая игровая сессия.
+ * @param {'swap'|'activate'} type - Тип команды.
+ * @param {boolean} accepted - Была ли команда принята.
+ * @param {string} reason - Стабильный код результата.
+ * @returns {boolean} Значение результата публичной команды.
  */
 function recordCommand(game, type, accepted, reason) {
   game.lastCommand = { type, accepted, reason };
@@ -49,11 +48,11 @@ function recordCommand(game, type, accepted, reason) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @param {number} firstIndex - Параметр операции.
- * @param {number} secondIndex - Параметр операции.
- * @returns Результат выполнения операции.
+ * Принятый обмен расходует один ход и ожидает каскады; недопустимый обмен возвращается без расхода хода.
+ * @param {import("../core/Game.js").Game} game
+ * @param {number} firstIndex
+ * @param {number} secondIndex
+ * @returns {Promise<boolean>}
  */
 export async function resolveMove(game, firstIndex, secondIndex) {
   if (game.busy) return recordCommand(game, 'swap', false, 'BUSY');
@@ -69,9 +68,8 @@ export async function resolveMove(game, firstIndex, secondIndex) {
     const matches = game.findMatches();
     const hasBooster = [firstIndex, secondIndex].some(
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {number} index - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {number} index
+       * @returns {boolean}
        */ (index) => game.board[index].kind === 'booster',
     );
     if (!hasBooster && !matches.length) {
@@ -92,12 +90,11 @@ export async function resolveMove(game, firstIndex, secondIndex) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @param {number} firstIndex - Параметр операции.
- * @param {number} secondIndex - Параметр операции.
- * @param {import("../types.js").Match[]} matches - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {import("../core/Game.js").Game} game
+ * @param {number} firstIndex
+ * @param {number} secondIndex
+ * @param {import("../types.js").Match[]} matches
+ * @returns {Promise<void>}
  */
 async function resolveSwap(game, firstIndex, secondIndex, matches) {
   const firstPiece = game.board[firstIndex];
@@ -116,10 +113,9 @@ async function resolveSwap(game, firstIndex, secondIndex, matches) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @param {number} index - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {import("../core/Game.js").Game} game
+ * @param {number} index
+ * @returns {Promise<boolean>}
  */
 export async function activateBooster(game, index) {
   if (game.busy) {
@@ -144,9 +140,9 @@ export async function activateBooster(game, index) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @returns Результат выполнения операции.
+ * После каскадов ящики меняют цвет один раз; победа проверяется раньше поражения, затем восстанавливаются ходы.
+ * @param {import("../core/Game.js").Game} game
+ * @returns {Promise<void>}
  */
 export async function finishTurn(game) {
   await resolveBoard(game);
@@ -159,9 +155,8 @@ export async function finishTurn(game) {
   else if (
     !game.board.some(
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {import("../types.js").Cell} piece - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {import("../types.js").Cell} piece
+       * @returns {boolean}
        */ (piece) => piece?.kind === 'booster',
     ) &&
     !game.legalMoves().length

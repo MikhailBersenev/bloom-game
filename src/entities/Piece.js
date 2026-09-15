@@ -2,25 +2,22 @@ export const COLORS = ['coral', 'gold', 'green', 'blue', 'purple', 'pink'];
 export const BOOSTERS = ['line', 'bomb', 'rainbow', 'plane'];
 let sequence = 0;
 /**
- * Описание операции или проверяемого поведения.
- * @param {number|null} color - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {number|null} color
+ * @returns {import("../types.js").Piece}
  */
 export const gem = (color) => ({ kind: 'gem', color, id: ++sequence });
 /**
- * Описание операции или проверяемого поведения.
- * @param {string} type - Параметр операции.
- * @param {string} [axis] - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {string} type
+ * @param {string} [axis]
+ * @returns {import("../types.js").Piece}
  */
 export const booster = (type, axis = 'h') => ({ kind: 'booster', type, axis, id: ++sequence });
 /**
- * Описание операции или проверяемого поведения.
- * @param {string} [type] - Параметр операции.
- * @param {number} [hp] - Параметр операции.
- * @param {number|null} [color] - Параметр операции.
- * @param {import("../types.js").Cell} [contains] - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {string} [type]
+ * @param {number} [hp]
+ * @param {number|null} [color]
+ * @param {import("../types.js").Cell} [contains]
+ * @returns {import("../types.js").Piece}
  */
 export const box = (type = 'wood', hp = 1, color = 0, contains = null) => ({
   kind: 'box',
@@ -33,9 +30,9 @@ export const box = (type = 'wood', hp = 1, color = 0, contains = null) => ({
 export { elementRules, registerElement } from './obstacles/rules.js';
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../types.js").Cell} item - Параметр операции.
- * @returns Результат выполнения операции.
+ * Копирует вложения с новыми ID, чтобы игровые сессии не разделяли изменяемые ящики.
+ * @param {import("../types.js").Cell} item
+ * @returns {import("../types.js").Cell}
  */
 export function cloneElement(item) {
   if (!item) return null;

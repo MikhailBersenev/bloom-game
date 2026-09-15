@@ -1,6 +1,10 @@
 import { booster } from '../entities/Piece.js';
 
-/** @param {string} firstType @param {string} secondType @returns {string} */
+/** Создаёт одинаковый ключ для обоих порядков пары бустеров.
+ * @param {string} firstType
+ * @param {string} secondType
+ * @returns {string}
+ */
 export function combinationKey(firstType, secondType) {
   return [firstType, secondType].sort().join('+');
 }
@@ -8,19 +12,19 @@ export function combinationKey(firstType, secondType) {
 /**
  * @typedef {Object} CombinationContext
  * @property {import('../core/ResolutionWave.js').ResolutionWave} wave
- * @property {number} a
- * @property {number} b
- * @property {import('../types.js').Piece} first
- * @property {import('../types.js').Piece} second
- * @property {(partner: import('../types.js').Piece, origin: number) => void} convertColor
- * @property {(origin: number) => number} flyToTarget
+ * @property {number} a - Первая клетка комбинации после обмена.
+ * @property {number} b - Вторая клетка после обмена; центр большинства эффектов.
+ * @property {import('../types.js').Piece} first - Бустер в клетке a.
+ * @property {import('../types.js').Piece} second - Бустер в клетке b.
+ * @property {(partner: import('../types.js').Piece, origin: number) => void} convertColor - Превращает выбранный цвет в бустеры и ставит их в очередь активации.
+ * @property {(origin: number) => number} flyToTarget - Помечает полезную мишень как задетую и возвращает её индекс либо -1.
  */
 
 /** @type {Map<string, (context: CombinationContext) => void>} */
 export const combinationStrategies = new Map();
 
 /**
- * Registers or replaces a stateless combination strategy.
+ * Регистрирует или заменяет обработчик комбинации; состояние волны передаётся через контекст.
  * @param {string} firstType @param {string} secondType
  * @param {(context: CombinationContext) => void} strategy
  * @returns {string}
@@ -79,8 +83,8 @@ export class BoosterCombinationResolver {
   }
 
   /**
-   * Performs common bookkeeping, then delegates the unique effect to the registry.
-   * Unknown combinations safely consume both boosters and return `false`.
+   * Засчитывает оба бустера и передаёт расчёт эффекта обработчику из реестра.
+   * Неизвестная комбинация расходует оба бустера без дополнительного эффекта и возвращает `false`.
    * @param {import('../types.js').Combination} options
    * @returns {boolean}
    */
@@ -113,7 +117,10 @@ export class BoosterCombinationResolver {
     return true;
   }
 
-  /** @param {import('../types.js').Piece} partner @param {number} origin */
+  /** Сохраняет сбор исходных фишек при превращении выбранного цвета в цепь бустеров.
+   * @param {import('../types.js').Piece} partner
+   * @param {number} origin
+   */
   convertColor(partner, origin) {
     const color = this.wave.game.bestColor();
     this.wave.game.board.forEach((item, index) => {
@@ -123,7 +130,10 @@ export class BoosterCombinationResolver {
     this.wave.effects.push({ type: 'rainbow', i: origin });
   }
 
-  /** @param {number} origin @returns {number} */
+  /** Выбирает новую мишень с учётом уже задетых клеток этой волны.
+   * @param {number} origin
+   * @returns {number} Индекс мишени или -1, если подходящих клеток нет.
+   */
   flyToTarget(origin) {
     const target = this.wave.game.target(this.wave.hits);
     if (target >= 0) {

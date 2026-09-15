@@ -4,7 +4,7 @@ export const elementRules = new Map([
     {
       canDamage: /**
        * Деревянный ящик получает урон от соседнего матча любого цвета или прямого удара бустера.
-       * @returns {*} Callback result used by the enclosing operation.
+       * @returns {*} Результат обработчика.
        */ () => true,
     },
   ],
@@ -13,9 +13,9 @@ export const elementRules = new Map([
     {
       canDamage: /**
        * Цветной ящик повреждается только от соседнего матча своего цвета; прямой удар не обходит условие.
-       * @param {import("../../types.js").Cell} item - Current element.
-       * @param {{direct: boolean, colors: Set<number>}} hit - Accumulated direct and color damage.
-       * @returns {*} Callback result used by the enclosing operation.
+       * @param {import("../../types.js").Cell} item - Текущий элемент.
+       * @param {{direct: boolean, colors: Set<number>}} hit - Накопленные прямые попадания и цвета соседних матчей.
+       * @returns {*} Результат обработчика.
        */ (item, hit) => hit.colors.has(item.color),
     },
   ],
@@ -24,15 +24,15 @@ export const elementRules = new Map([
     {
       canDamage: /**
        * Меняющий цвет ящик повреждается только от соседнего матча своего текущего цвета.
-       * @param {import("../../types.js").Cell} item - Current element.
-       * @param {{direct: boolean, colors: Set<number>}} hit - Accumulated direct and color damage.
-       * @returns {*} Callback result used by the enclosing operation.
+       * @param {import("../../types.js").Cell} item - Текущий элемент.
+       * @param {{direct: boolean, colors: Set<number>}} hit - Накопленные прямые попадания и цвета соседних матчей.
+       * @returns {*} Результат обработчика.
        */ (item, hit) => hit.colors.has(item.color),
       afterTurn: /**
        * Цвет меняется один раз после принятого хода и завершения всех каскадов.
-       * @param {import("../../types.js").Cell} item - Current element.
-       * @param {number} n - Count or exclusive upper bound.
-       * @returns {void} Completes the callback side effects.
+       * @param {import("../../types.js").Cell} item - Текущий элемент.
+       * @param {number} n - Количество цветов уровня.
+       * @returns {void} Завершает обновление состояния.
        */ (item, n) => {
         item.color = (item.color + 1) % n;
       },
@@ -43,16 +43,18 @@ export const elementRules = new Map([
     {
       canDamage: /**
        * Каменный блокер не получает урон, в том числе от двойного радужного шара.
-       * @returns {*} Callback result used by the enclosing operation.
+       * @returns {*} Результат обработчика.
        */ () => false,
     },
   ],
 ]);
 /**
- * Описание операции или проверяемого поведения.
- * @param {string} type - Параметр операции.
- * @param {Object} rule - Параметр операции.
- * @returns Результат выполнения операции.
+ * Регистрирует правила типа ящика. canDamage — чистая проверка без изменения
+ * элемента: её вызывают и при выборе мишени, и при подсчёте урона волны.
+ * Необязательный afterTurn изменяет ящик один раз после завершения принятого хода.
+ * @param {string} type
+ * @param {Object} rule
+ * @returns {void}
  */
 export function registerElement(type, rule) {
   if (typeof type !== 'string' || !type) throw new TypeError('Element type is required');

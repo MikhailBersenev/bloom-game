@@ -5,11 +5,11 @@ const RUN_DIRECTIONS = [
 ];
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../types.js").Cell[]} board - Параметр операции.
- * @param {number} rows - Параметр операции.
- * @param {number} cols - Параметр операции.
- * @returns Результат выполнения операции.
+ * Ищет ряды и квадраты без изменения поля; стабильный порядок фигур определяет создание бустеров.
+ * @param {import("../types.js").Cell[]} board
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {import("../types.js").Match[]}
  */
 export function findMatches(board, rows, cols) {
   const indexAt = /**
@@ -25,9 +25,8 @@ export function findMatches(board, rows, cols) {
    */ (indices) =>
     indices.every(
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {number} index - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {number} index
+       * @returns {boolean}
        */ (index) =>
         index >= 0 &&
         board[index]?.kind === 'gem' &&
@@ -41,7 +40,7 @@ export function findMatches(board, rows, cols) {
       if (board[index]?.kind !== 'gem') continue;
       for (const [rowStep, colStep, axis] of RUN_DIRECTIONS) {
         const previous = indexAt(row - rowStep, col - colStep);
-        // Описание совместимости и назначения модуля.
+        // Ряд регистрируется только по первой клетке, чтобы не учитывать один матч повторно.
         if (previous >= 0 && sameColor([index, previous])) continue;
         const cells = [index];
         let nextRow = row + rowStep;
@@ -65,9 +64,8 @@ export function findMatches(board, rows, cols) {
 
   return mergeOverlaps(patterns).map(
     /**
-     * Описание операции или проверяемого поведения.
-     * @param {import("../types.js").Match} group - Параметр операции.
-     * @returns Результат выполнения операции.
+     * @param {import("../types.js").Match} group
+     * @returns {*}
      */ (group) => ({
       ...group,
       color: board[group.cells[0]].color,
@@ -77,24 +75,22 @@ export function findMatches(board, rows, cols) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../types.js").MatchPattern[]} patterns - Параметр операции.
- * @returns Результат выполнения операции.
+ * Объединяет пересекающиеся фигуры, сохраняя стабильный порядок клеток для выбора места бустера.
+ * @param {import("../types.js").MatchPattern[]} patterns
+ * @returns {Object[]}
  */
 function mergeOverlaps(patterns) {
   const groups = [];
   for (const pattern of patterns) {
     const touching = groups.filter(
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {import("../types.js").Match} group - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {import("../types.js").Match} group
+       * @returns {boolean}
        */ (group) =>
         group.cells.some(
           /**
-           * Описание операции или проверяемого поведения.
-           * @param {number} index - Параметр операции.
-           * @returns Результат выполнения операции.
+           * @param {number} index
+           * @returns {boolean}
            */ (index) => pattern.cells.includes(index),
         ),
     );

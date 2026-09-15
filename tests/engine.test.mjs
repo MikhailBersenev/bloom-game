@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Game, gem, booster, box, registerElement } from '../src/engine.js';
+import { Game, gem, booster, box, registerElement, elementRules } from '../src/engine.js';
 import { levels } from '../src/levels.js';
 
 test('snapshot is detached and command failures expose a reason', async () => {
@@ -329,22 +329,91 @@ test('cycling changes once after a valid turn; invalid swap leaves colors intact
   assert.equal(g.board[48].color, 2);
   assert.equal(g.turn, 1);
 });
-test('plane prioritizes outstanding level goals and leaves blockers intact', async () => {
+test('plane collects a reachable goal instead of targeting an immune goal box', async () => {
   const g = fixture();
-  g.level.goals = [{ key: 'box:colored', count: 1 }];
+  g.level.goals = [
+    { key: 'box:colored', count: 1 },
+    { key: 'box:cycling', count: 1 },
+    { key: 'color:3', count: 1 },
+  ];
+  g.board = g.board.map(() => gem(2));
   g.board[48] = box('colored', 1, 4);
   g.board[47] = box('blocker');
+  g.board[46] = box('cycling', 1, 4);
+  g.board[40] = gem(3);
   g.board[0] = booster('plane');
   let event;
   g.animate = async (e) => {
     if (e.type === 'remove') event = e;
   };
   await g.wave([], [{ i: 0 }]);
-  assert.equal(event.effects.find((e) => e.type === 'plane').target, 48);
+  assert.equal(event.effects.find((e) => e.type === 'plane').target, 40);
+  assert.equal(g.collected['color:3'], 1);
+  assert.ok(event.removed.includes(40));
+  assert.deepEqual(event.damaged, []);
   assert.equal(g.collected['box:colored'] || 0, 0);
   assert.equal(g.board[48].hp, 1);
+  assert.equal(g.board[46].hp, 1);
   assert.equal(g.board[47].type, 'blocker');
 });
+
+test('plane targeting respects registered damage rules and unavailable targets', async () => {
+  registerElement('plane-proof', { canDamage: () => false });
+  registerElement('plane-armor', { canDamage: (_piece, hit) => hit.direct });
+  try {
+    const g = fixture();
+    g.level.goals = [{ key: 'box', count: 1 }];
+    g.board[48] = box('plane-proof');
+    g.board[47] = box('plane-armor', 2);
+    g.board[0] = booster('plane');
+    assert.equal(g.target(), 47);
+    assert.notEqual(g.target(new Set([47])), 47);
+    await g.wave([], [{ i: 0 }]);
+    assert.equal(g.board[47].hp, 1);
+    assert.equal(g.board[48].hp, 1);
+
+    g.board = g.board.map(() => box('colored', 1, 0));
+    g.board[0] = booster('plane');
+    let removal;
+    g.animate = async (event) => {
+      if (event.type === 'remove') removal = event;
+    };
+    assert.equal(g.target(new Set([0])), -1);
+    await g.wave([], [{ i: 0 }]);
+    assert.equal(removal.effects.find((effect) => effect.type === 'plane').target, undefined);
+    assert.deepEqual(removal.damaged, []);
+  } finally {
+    elementRules.delete('plane-proof');
+    elementRules.delete('plane-armor');
+  }
+});
+test('double plane selects three distinct useful targets and skips immune goal boxes', async () => {
+  const g = fixture();
+  g.level.goals = [
+    { key: 'box', count: 1 },
+    { key: 'color:3', count: 3 },
+  ];
+  g.board = g.board.map(() => gem(2));
+  g.board[0] = booster('plane');
+  g.board[1] = booster('plane');
+  g.board[46] = box('colored', 1, 3);
+  g.board[47] = box('cycling', 1, 3);
+  g.board[48] = box('blocker');
+  for (const index of [38, 39, 40]) g.board[index] = gem(3);
+  let removal;
+  g.animate = async (event) => {
+    if (event.type === 'remove') removal = event;
+  };
+  await g.wave([], [], { a: 0, b: 1 });
+  assert.deepEqual(
+    removal.effects.filter((effect) => effect.type === 'plane').map((effect) => effect.target),
+    [38, 39, 40],
+  );
+  assert.equal(g.collected['color:3'], 3);
+  assert.equal(g.collected['booster:plane'], 2);
+  assert.deepEqual(removal.damaged, []);
+});
+
 test('rainbow swapped with a gem collects that exact color', async () => {
   const g = fixture();
   g.board[0] = booster('rainbow');

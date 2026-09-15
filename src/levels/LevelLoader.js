@@ -1,7 +1,6 @@
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../types.js").LevelConfig} options - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {import("../types.js").LevelConfig} options
+ * @returns {import("../types.js").LevelConfig}
  */
 export function loadLevel({ placements = [], ...settings }) {
   const map = Array(settings.rows * settings.cols).fill('?');

@@ -6,13 +6,12 @@ import { loadProgress, saveProgress } from './progress.js';
 import { bindBoardInput } from './input.js';
 import { showHelp, showResult, renderGuide } from './dialogs.js';
 
-/** Coordinates a level session. Gameplay rules remain in the engine. */
+/** Управляет сессией уровня и интерфейсом; игровые правила остаются в движке. */
 export class GameController {
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../types.js").LevelConfig[]} levels - Параметр операции.
-   * @param {Document} [root] - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import("../types.js").LevelConfig[]} levels
+   * @param {Document} [root]
+   * @returns {void}
    */
   constructor(levels, root = document) {
     this.levels = levels;
@@ -28,8 +27,7 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {Promise<void>}
    */
   async mount() {
     this.bindControls();
@@ -38,9 +36,9 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} index - Параметр операции.
-   * @returns Результат выполнения операции.
+   * Запускает уровень; отложенная анимация не должна обновлять более новую игровую сессию.
+   * @param {number} index
+   * @returns {Promise<void>}
    */
   async startLevel(index) {
     this.levelIndex = Math.max(0, Math.min(this.levels.length - 1, index));
@@ -53,14 +51,14 @@ export class GameController {
        * Передаёт события движка текущему адаптеру анимации.
        * @param {Object} event - Event being handled.
        * @param {import("../core/Game.js").Game} game - Current game session.
-       * @returns {*} Callback result used by the enclosing operation.
+       * @returns {*} Результат обработчика.
        */ (event, game) =>
         this.animations.play(
           event,
           game,
           /**
-           * Описание операции или проверяемого поведения.
-           * @returns Результат выполнения операции.
+           * Отложенные события допускаются только для текущей сессии уровня.
+           * @returns {*}
            */ () => session === this.session,
         ),
     });
@@ -77,8 +75,7 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {void}
    */
   render() {
     this.view.draw(this.game, this.selected);
@@ -86,16 +83,14 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {void}
    */
   renderMap() {
     this.view.renderMap(this.levels, this.levelIndex, this.progress.unlocked);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {Promise<void>}
    */
   async showOutcome() {
     if (this.game.status === 'playing') return;
@@ -112,7 +107,7 @@ export class GameController {
     const session = this.session;
     let hasContinued = false;
     /** Переход по результату выполняется один раз; события заменённой сессии игнорируются.
-     * @returns Результат выполнения операции.
+     * @returns {Promise<void>}
      */
     const continueLevel = async () => {
       if (hasContinued || this.game !== game || session !== this.session) return;
@@ -127,9 +122,8 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {function(import("../core/Game.js").Game): Promise<*>} action - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {function(import("../core/Game.js").Game): Promise<*>} action
+   * @returns {Promise<void>}
    */
   async perform(action) {
     const game = this.game;
@@ -147,25 +141,22 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} first - Параметр операции.
-   * @param {number} second - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} first
+   * @param {number} second
+   * @returns {Promise<void>}
    */
   swap(first, second) {
     return this.perform(
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {import("../core/Game.js").Game} game - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {import("../core/Game.js").Game} game
+       * @returns {*}
        */ (game) => game.swap(first, second),
     );
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} index - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} index
+   * @returns {Promise<void>}
    */
   async choose(index) {
     const game = this.game;
@@ -181,9 +172,8 @@ export class GameController {
     if (this.selected === index && game.board[index].kind === 'booster') {
       await this.perform(
         /**
-         * Описание операции или проверяемого поведения.
-         * @param {import("../core/Game.js").Game} owner - Параметр операции.
-         * @returns Результат выполнения операции.
+         * @param {import("../core/Game.js").Game} owner
+         * @returns {*}
          */ (owner) => owner.activate(index),
       );
       return;
@@ -197,8 +187,7 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {void}
    */
   hint() {
     if (this.game.busy) return;
@@ -209,8 +198,7 @@ export class GameController {
       tile?.classList.add('hint');
       setTimeout(
         /**
-         * Описание операции или проверяемого поведения.
-         * @returns Результат выполнения операции.
+         * @returns {*}
          */ () => tile?.classList.remove('hint'),
         1800,
       );
@@ -219,9 +207,8 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {boolean} won - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {boolean} won
+   * @returns {void}
    */
   cheat(won) {
     if (this.game.busy) return;
@@ -229,8 +216,8 @@ export class GameController {
     this.view.hud(this.game);
     void this.showOutcome().catch(
       /** Сообщает об ошибке перехода после результата.
-       * @param {Error} error - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {Error} error
+       * @returns {void}
        */ (error) => {
         console.error(error);
         this.view.toast('Не удалось открыть уровень. Попробуйте ещё раз.');
@@ -239,57 +226,54 @@ export class GameController {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {void}
    */
   bindControls() {
     const query = /**
      * Ищет элемент управления внутри корня контроллера.
      * @param {string} selector - CSS selector of the control.
-     * @returns {*} Callback result used by the enclosing operation.
+     * @returns {*} Результат обработчика.
      */ (selector) => this.root.querySelector(selector);
     const whenIdle = /**
-     * Wraps a control action with the current busy-state guard.
+     * Разрешает действие только между игровыми ходами.
      * @param {function(): *} action - Control action to invoke.
-     * @returns {*} Callback result used by the enclosing operation.
+     * @returns {*} Результат обработчика.
      */ (action) =>
       /**
-       * Описание операции или проверяемого поведения.
-       * @returns Результат выполнения операции.
+       * @returns {void}
        */ () => {
         if (!this.game.busy) action();
       };
     bindBoardInput(this.view.board, {
       getGame: /**
        * Передаёт текущую сессию постоянным обработчикам ввода.
-       * @returns {*} Callback result used by the enclosing operation.
+       * @returns {*} Результат обработчика.
        */ () => this.game,
       choose: /**
        * Передаёт выбранную клетку обработчику выбора.
        * @param {number} index - Row-major cell position.
-       * @returns {*} Callback result used by the enclosing operation.
+       * @returns {*} Результат обработчика.
        */ (index) => this.choose(index),
       swap: /**
        * Передаёт обмен перетаскиванием обработчику команд.
        * @param {number} first - First selected cell.
        * @param {number} second - Second selected cell.
-       * @returns {*} Callback result used by the enclosing operation.
+       * @returns {*} Результат обработчика.
        */ (first, second) => this.swap(first, second),
     });
     query('#restart').onclick = whenIdle(
       /**
-       * Описание операции или проверяемого поведения.
-       * @returns Результат выполнения операции.
+       * @returns {*}
        */ () => this.startLevel(this.levelIndex),
     );
     query('#hint').onclick = /**
-     * Displays a suggested exchange.
-     * @returns {*} Callback result used by the enclosing operation.
+     * Подсвечивает доступный обмен.
+     * @returns {*} Результат обработчика.
      */ () => this.hint();
     query('#level-map').onclick = /**
      * Открывает выбранный уровень карты, когда игра бездействует.
      * @param {Object} event - Event being handled.
-     * @returns {void} Completes the callback side effects.
+     * @returns {void} Завершает обновление состояния.
      */ (event) => {
       const button = event.target.closest('[data-level]');
       if (button && !this.game.busy) this.startLevel(Number(button.dataset.level));
@@ -297,31 +281,29 @@ export class GameController {
     query('#level-select').innerHTML = this.levels
       .map(
         /**
-         * Описание операции или проверяемого поведения.
-         * @param {import("../types.js").LevelConfig} level - Параметр операции.
-         * @param {number} index - Параметр операции.
-         * @returns Результат выполнения операции.
+         * @param {import("../types.js").LevelConfig} level
+         * @param {number} index
+         * @returns {*}
          */ (level, index) =>
           `<option value="${index}">${String(index + 1).padStart(2, '0')} · ${level.name}</option>`,
       )
       .join('');
     query('#level-go').onclick = whenIdle(
       /**
-       * Описание операции или проверяемого поведения.
-       * @returns Результат выполнения операции.
+       * @returns {*}
        */ () => this.startLevel(Number(query('#level-select').value)),
     );
     query('#cheat-win').onclick = /**
      * Запрашивает тестовую команду победы.
-     * @returns {*} Callback result used by the enclosing operation.
+     * @returns {*} Результат обработчика.
      */ () => this.cheat(true);
     query('#cheat-lose').onclick = /**
      * Запрашивает тестовую команду поражения.
-     * @returns {*} Callback result used by the enclosing operation.
+     * @returns {*} Результат обработчика.
      */ () => this.cheat(false);
     query('#sound').onclick = /**
      * Переключает звук и синхронизирует вид кнопки и доступную подпись.
-     * @returns {void} Completes the callback side effects.
+     * @returns {void} Завершает обновление состояния.
      */ () => {
       const enabled = this.audio.toggle();
       query('#sound').classList.toggle('enabled', enabled);
@@ -329,16 +311,15 @@ export class GameController {
     };
     query('#help').onclick = /**
      * Открывает инструкции во время игры.
-     * @returns {void} Completes the callback side effects.
+     * @returns {void} Завершает обновление состояния.
      */ () => {
       if (this.game.status === 'playing') showHelp(this.view.modal);
     };
     this.view.modal.addEventListener(
       'cancel',
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {Object} event - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {Object} event
+       * @returns {void}
        */ (event) => {
         if (this.game.status !== 'playing') event.preventDefault();
       },

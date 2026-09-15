@@ -11,10 +11,10 @@ import { ResolutionWave } from './ResolutionWave.js';
 import { createEngineEvent } from '../types.js';
 
 /**
- * Описание операции или проверяемого поведения.
- * Описание операции или проверяемого поведения.
- * @param {*} value - Параметр операции.
- * @returns Результат выполнения операции.
+ * Рекурсивно копирует и замораживает данные снимка, чтобы внешнее изменение
+ * уровня или вложенного элемента не могло повлиять на игровую сессию.
+ * @param {*} value - Значение из текущего состояния игры.
+ * @returns {*} Независимая неизменяемая копия.
  */
 function frozenCopy(value) {
   if (value === null || typeof value !== 'object') return value;
@@ -25,9 +25,7 @@ function frozenCopy(value) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {*} value - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {*} value
  */
 function cloneData(value) {
   if (value === null || typeof value !== 'object') return value;
@@ -38,10 +36,9 @@ function cloneData(value) {
 /** Публичная оболочка сессии: хранит счётчики и объединяет игровые операции через асинхронный обработчик событий. */
 export class Game {
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../types.js").LevelConfig} level - Параметр операции.
+   * @param {import("../types.js").LevelConfig} level
    * @param {import('../types.js').GameOptions} options - Engine dependencies.
-   * @returns Результат выполнения операции.
+   * @returns {void}
    */
   constructor(
     level,
@@ -70,17 +67,16 @@ export class Game {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {import("../types.js").Cell[]}
    */
   get board() {
     return this.field.cells;
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * Возвращает независимый неизменяемый снимок состояния для интерфейса и интеграций.
+   * Изменять живую игровую сессию можно только через её команды.
+   * @returns {Object} Независимый снимок состояния.
    */
   getSnapshot() {
     return Object.freeze({
@@ -99,18 +95,16 @@ export class Game {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../types.js").Cell[]} cells - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import("../types.js").Cell[]} cells
+   * @returns {void}
    */
   set board(cells) {
     this.field.cells = cells;
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {boolean} isWon - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {boolean} isWon
+   * @returns {void}
    */
   forceOutcome(isWon) {
     if (this.busy) return;
@@ -123,124 +117,113 @@ export class Game {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../types.js").Cell} item - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import("../types.js").Cell} item
+   * @returns {import("../types.js").Cell}
    */
   clone(item) {
     return cloneElement(item);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * Подбирает случайные клетки без стартовых матчей и с допустимым ходом; заданные клетки сохраняет. При исчерпании попыток сообщает об ошибке.
+   * @returns {void}
    */
   initialize() {
     return initializeBoard(this);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {import("../types.js").Piece}
    */
   createPiece() {
     return gem(this.rand(this.level.colors));
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} n - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} n
+   * @returns {number}
    */
   rand(n) {
     return Math.floor(this.random() * n);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} i - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} i
+   * @returns {number[]}
    */
   rc(i) {
     return this.field.coordinatesAt(i);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} r - Параметр операции.
-   * @param {number} c - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} r
+   * @param {number} c
+   * @returns {number}
    */
   at(r, c) {
     return this.field.indexAt(r, c);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} i - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} i
+   * @returns {number[]}
    */
   adjacent(i) {
     return this.field.neighborsOf(i);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} i - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} i
+   * @returns {boolean|null|undefined}
    */
   movable(i) {
     return this.field.hasMovablePiece(i);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * Ищет ряды и квадраты без изменения поля; стабильный порядок фигур определяет создание бустеров.
+   * @returns {import("../types.js").Match[]}
    */
   findMatches() {
     return findMatches(this.board, this.rows, this.cols);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * Проверяет обмены в стабильном порядке и восстанавливает поле после каждой пробной перестановки.
+   * @returns {Array<import("../types.js").Move>}
    */
   legalMoves() {
     return findLegalMoves(this);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {string} key - Параметр операции.
-   * @param {number} [n] - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {string} key
+   * @param {number} [n]
+   * @returns {void}
    */
   collect(key, n = 1) {
     return collect(this.collected, key, n);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../types.js").GoalConfig} goal - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {import("../types.js").GoalConfig} goal
+   * @returns {number}
    */
   remaining(goal) {
     return remaining(this.collected, goal);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {boolean}
    */
   won() {
     return won(this.level.goals, this.collected);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
    * @param {import('../types.js').EngineEventType} type - Event discriminator.
    * @param {Record<string, unknown>} [extra={}] - Event-specific payload.
-   * @returns Результат выполнения операции.
+   * @returns {Promise<void>}
    */
   async emit(type, extra = {}) {
     const event = createEngineEvent(type, this.board, extra);
@@ -248,64 +231,60 @@ export class Game {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * Приоритет у цветов незавершённых целей, затем у количества фишек; равенство решает порядок палитры.
+   * @returns {number}
    */
   bestColor() {
     return bestColor(this);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {Set<number>} [exclude] - Параметр операции.
-   * @returns Результат выполнения операции.
+   * Выбирает первую цель наивысшего приоритета вне исключённых клеток; каменные блокеры не выбираются.
+   * @param {Set<number>} [exclude]
+   * @returns {number}
    */
   target(exclude = new Set()) {
     return target(this, exclude);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} i - Параметр операции.
-   * @param {number} radius - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} i
+   * @param {number} radius
+   * @returns {number[]}
    */
   area(i, radius) {
     return this.field.squareAround(i, radius);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} i - Параметр операции.
-   * @param {string} [axis] - Параметр операции.
-   * @param {number} [width] - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} i
+   * @param {string} [axis]
+   * @param {number} [width]
+   * @returns {number[]}
    */
   line(i, axis = 'h', width = 1) {
     return this.field.lineThrough(i, axis, width);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {import("../types.js").Match[]} [groups] - Параметр операции.
-   * @param {import("../types.js").Activation[]} [activation] - Параметр операции.
-   * @param {import("../types.js").Combination|null} [combo] - Параметр операции.
-   * @returns Результат выполнения операции.
+   * Разрешает волну удаления вместе с цепной реакцией, затем ожидает анимацию падения.
+   * @param {import("../types.js").Match[]} [groups]
+   * @param {import("../types.js").Activation[]} [activation]
+   * @param {import("../types.js").Combination|null} [combo]
+   * @returns {Promise<void>}
    */
   async wave(groups = [], activation = [], combo = null) {
     await new ResolutionWave(this).resolve(groups, activation, combo);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {Promise<void>}
    */
   async gravity() {
     const { cells, falls } = calculateGravity(
       this.field,
       /**
-       * Описание операции или проверяемого поведения.
-       * @returns Результат выполнения операции.
+       * @returns {*}
        */ () => this.createPiece(),
     );
     this.board.splice(0, this.board.length, ...cells);
@@ -313,40 +292,39 @@ export class Game {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * Матчи разрешаются последовательно; предел каскадов защищает от бесконечной цепочки.
+   * @returns {Promise<void>}
    */
   async settle() {
     return resolveBoard(this);
   }
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} a - Параметр операции.
-   * @param {number} b - Параметр операции.
-   * @returns Результат выполнения операции.
+   * Принятый обмен расходует один ход и ожидает каскады; недопустимый обмен возвращается без расхода хода.
+   * @param {number} a
+   * @param {number} b
+   * @returns {Promise<boolean>}
    */
   async swap(a, b) {
     return resolveMove(this, a, b);
   }
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} i - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} i
+   * @returns {Promise<boolean>}
    */
   async activate(i) {
     return activateBooster(this, i);
   }
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * После каскадов ящики меняют цвет один раз; победа проверяется раньше поражения, затем восстанавливаются ходы.
+   * @returns {Promise<void>}
    */
   async finishTurn() {
     return finishTurn(this);
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * Перемешивает фишки, при необходимости подбирает цвета заново; ящики неподвижны, завершение анимации обязательно.
+   * @returns {Promise<void>}
    */
   async shuffle() {
     return shuffleBoard(this);

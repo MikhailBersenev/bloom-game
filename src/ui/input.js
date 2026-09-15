@@ -2,10 +2,9 @@ const MIN_DRAG_DISTANCE = 15;
 const CLICK_SUPPRESSION_MS = 100;
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {HTMLElement} board - Параметр операции.
- * @param {{getGame: function(): import("../core/Game.js").Game, choose: function(number): *, swap: function(number, number): *}} options - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {HTMLElement} board
+ * @param {{getGame: function(): import("../core/Game.js").Game, choose: function(number): *, swap: function(number, number): *}} options
+ * @returns {void}
  */
 export function bindBoardInput(board, { getGame, choose, swap }) {
   let pointer = null;
@@ -14,9 +13,8 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   board.addEventListener(
     'pointerdown',
     /**
-     * Описание операции или проверяемого поведения.
-     * @param {Object} event - Параметр операции.
-     * @returns Результат выполнения операции.
+     * @param {Object} event
+     * @returns {void}
      */ (event) => {
       const tile = event.target.closest('.tile');
       if (!tile || getGame().busy) return;
@@ -27,9 +25,8 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   window.addEventListener(
     'pointerup',
     /**
-     * Описание операции или проверяемого поведения.
-     * @param {Object} event - Параметр операции.
-     * @returns Результат выполнения операции.
+     * @param {Object} event
+     * @returns {void}
      */ (event) => {
       if (!pointer) return;
       const origin = pointer;
@@ -41,8 +38,7 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
       suppressClick = true;
       setTimeout(
         /**
-         * Описание операции или проверяемого поведения.
-         * @returns Результат выполнения операции.
+         * @returns {void}
          */ () => {
           suppressClick = false;
         },
@@ -61,8 +57,7 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   board.addEventListener(
     'pointercancel',
     /**
-     * Описание операции или проверяемого поведения.
-     * @returns Результат выполнения операции.
+     * @returns {void}
      */ () => {
       pointer = null;
     },
@@ -70,9 +65,8 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   board.addEventListener(
     'click',
     /**
-     * Описание операции или проверяемого поведения.
-     * @param {Object} event - Параметр операции.
-     * @returns Результат выполнения операции.
+     * @param {Object} event
+     * @returns {void}
      */ (event) => {
       if (suppressClick) return;
       const tile = event.target.closest('.tile');
@@ -83,9 +77,8 @@ export function bindBoardInput(board, { getGame, choose, swap }) {
   board.addEventListener(
     'keydown',
     /**
-     * Описание операции или проверяемого поведения.
-     * @param {Object} event - Параметр операции.
-     * @returns Результат выполнения операции.
+     * @param {Object} event
+     * @returns {void}
      */ (event) => {
       const tile = event.target.closest('.tile');
       if (!tile) return;

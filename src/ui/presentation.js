@@ -12,11 +12,9 @@ const boxNames = {
   cycling: 'Меняющий цвет ящик',
   blocker: 'Каменный блокер',
 };
-// Описание совместимости и назначения модуля.
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../types.js").Cell} item - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {import("../types.js").Cell} item
+ * @returns {string}
  */
 export function icon(item) {
   if (!item) return '';
@@ -33,9 +31,8 @@ export function icon(item) {
   return `<img class="texture" src="/src/textures/${name}.svg" alt="" aria-hidden="true" draggable="false" width="80" height="80">`;
 }
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../types.js").Cell} item - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {import("../types.js").Cell} item
+ * @returns {string}
  */
 export function itemLabel(item) {
   if (item.kind === 'gem') return gemNames[item.color];
@@ -45,9 +42,8 @@ export function itemLabel(item) {
   return `${boxNames[item.type] || item.type}${color}, прочность ${item.hp}${contents}`;
 }
 /**
- * Описание операции или проверяемого поведения.
- * @param {string} key - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {string} key
+ * @returns {Object}
  */
 export function goalItem(key) {
   if (key.startsWith('color:')) return { kind: 'gem', color: +key.split(':')[1] };
@@ -57,8 +53,8 @@ export function goalItem(key) {
 }
 
 /** Описывает категорию цели, не выдумывая обязательный цвет или прочность ящика.
- * @param {string} key - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {string} key
+ * @returns {string}
  */
 export function goalLabel(key) {
   if (key.startsWith('color:')) return gemNames[Number(key.split(':')[1])];

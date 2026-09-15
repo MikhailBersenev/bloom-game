@@ -18,8 +18,8 @@ import { Board } from '../src/core/Board.js';
 import { calculateGravity } from '../src/core/Gravity.js';
 
 /** Создаёт ту же повторяемую последовательность случайных чисел, что использовалась для снимка исходного движка.
- * @param {number} seed - Параметр операции.
- * @returns Результат выполнения операции.
+ * @param {number} seed
+ * @returns {function(): number}
  */
 function randomSource(seed) {
   return () => {
@@ -46,7 +46,7 @@ test('120 turns retain the corrected engine board, counters and event payloads',
       const moves = game.legalMoves();
       await game.swap(...moves[game.rand(moves.length)]);
     }
-    // Описание совместимости и назначения модуля.
+    // Числовые ID выделяются глобально; их смещение не является частью игрового поведения.
     const trace = JSON.stringify(
       {
         initial,

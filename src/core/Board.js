@@ -26,7 +26,7 @@ export class Board {
   /**
    * Преобразует индекс клетки в порядке строк в её строку и столбец.
    * @param {number} index - Индекс клетки в порядке строк.
-   * @returns {number[]} Результат выполнения операции.
+   * @returns {number[]}
    */
   coordinatesAt(index) {
     return [Math.floor(index / this.cols), index % this.cols];
@@ -35,7 +35,7 @@ export class Board {
    * Преобразует строку и столбец в индекс клетки, возвращая -1 за пределами поля.
    * @param {number} row - Строка с нулевой индексацией.
    * @param {number} col - Столбец с нулевой индексацией.
-   * @returns {number} Результат выполнения операции.
+   * @returns {number}
    */
   indexAt(row, col) {
     return row >= 0 && col >= 0 && row < this.rows && col < this.cols ? row * this.cols + col : -1;
@@ -43,7 +43,7 @@ export class Board {
   /**
    * Возвращает соседние клетки по сторонам света в порядке вверх, вниз, влево, вправо.
    * @param {number} index - Индекс клетки в порядке строк.
-   * @returns {number[]} Результат выполнения операции.
+   * @returns {number[]}
    */
   neighborsOf(index) {
     const [row, col] = this.coordinatesAt(index);
@@ -71,7 +71,7 @@ export class Board {
   /**
    * Проверяет подвижность занятой клетки, сохраняя совместимый результат null для пустой клетки.
    * @param {number} index - Индекс клетки в порядке строк.
-   * @returns {boolean|null|undefined} Результат выполнения операции.
+   * @returns {boolean|null|undefined}
    */
   hasMovablePiece(index) {
     return this.cells[index] && this.cells[index].kind !== 'box';
@@ -80,7 +80,7 @@ export class Board {
    * Возвращает индексы внутри квадратного радиуса с обрезкой по полю.
    * @param {number} index - Индекс клетки в порядке строк.
    * @param {number} radius - Inclusive square radius.
-   * @returns {number[]} Результат выполнения операции.
+   * @returns {number[]}
    */
   squareAround(index, radius) {
     const [row, col] = this.coordinatesAt(index);
@@ -98,7 +98,7 @@ export class Board {
    * @param {number} index - Индекс клетки в порядке строк.
    * @param {string} [axis] - Направление эффекта.
    * @param {number} [width] - Exclusive strip distance.
-   * @returns {number[]} Результат выполнения операции.
+   * @returns {number[]}
    */
   lineThrough(index, axis = 'h', width = 1) {
     const [row, col] = this.coordinatesAt(index);

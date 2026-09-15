@@ -4,8 +4,7 @@ export class GameAudio {
   context = null;
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @returns Результат выполнения операции.
+   * @returns {boolean}
    */
   toggle() {
     this.muted = !this.muted;
@@ -14,9 +13,8 @@ export class GameAudio {
   }
 
   /**
-   * Описание операции или проверяемого поведения.
-   * @param {number} [frequency] - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {number} [frequency]
+   * @returns {void}
    */
   play(frequency = 440) {
     if (this.muted) return;
@@ -34,7 +32,7 @@ export class GameAudio {
       oscillator.start();
       oscillator.stop(now + 0.18);
     } catch {
-      // Описание совместимости и назначения модуля.
+      // Запрет звука или отсутствие аудиоустройства не должны прерывать игровой ход.
     }
   }
 }

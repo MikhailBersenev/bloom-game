@@ -1,11 +1,11 @@
 import { icon, goalLabel, goalItem } from './presentation.js';
 import { animateElement } from './motion.js';
 
-/** Displays live progress without owning goal rules or changing session state. */
+/** Показывает текущий прогресс; правила целей и состояние сессии остаются в движке. */
 export class HudView {
   /** Связывает HUD со страницей и состоянием доступности игрового поля.
-   * @param {Document} root - Параметр операции.
-   * @param {HTMLElement} board - Параметр операции.
+   * @param {Document} root
+   * @param {HTMLElement} board
    */
   constructor(root, board) {
     this.root = root;
@@ -13,9 +13,9 @@ export class HudView {
     this.game = null;
   }
 
-  /** Updates counters and preserves badge nodes so only changed goals pulse.
-   * @param {import('../core/Game.js').Game} game - Параметр операции.
-   * @returns Результат выполнения операции.
+  /** Обновляет счётчики, сохраняя DOM-узлы целей: пульсируют только изменившиеся цели.
+   * @param {import('../core/Game.js').Game} game
+   * @returns {void}
    */
   hud(game) {
     const container = this.root.querySelector('#goals');
@@ -35,11 +35,11 @@ export class HudView {
   }
 
   /** Отображает собранное и требуемое количество, отметку выполнения и прогресс одной цели.
-   * @param {HTMLElement} container - Параметр операции.
-   * @param {number} index - Параметр операции.
-   * @param {import('../types.js').GoalConfig} goal - Параметр операции.
-   * @param {import('../core/Game.js').Game} game - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {HTMLElement} container
+   * @param {number} index
+   * @param {import('../types.js').GoalConfig} goal
+   * @param {import('../core/Game.js').Game} game
+   * @returns {void}
    */
   updateGoal(container, index, goal, game) {
     let badge = container.children[index];

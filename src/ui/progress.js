@@ -1,8 +1,8 @@
 const STORAGE_KEY = 'bloom-progress';
 
 /**
- * Описание операции или проверяемого поведения.
- * @returns Результат выполнения операции.
+ * Возвращает сохранённую навигацию или начальные значения при недоступном хранилище.
+ * @returns {{unlocked: number, level: number}}
  */
 export function loadProgress() {
   try {
@@ -13,14 +13,14 @@ export function loadProgress() {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {{unlocked: number, level: number}} progress - Параметр операции.
- * @returns Результат выполнения операции.
+ * Сохраняет навигацию; отсутствие хранилища не мешает продолжать игру.
+ * @param {{unlocked: number, level: number}} progress
+ * @returns {void}
  */
 export function saveProgress(progress) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   } catch {
-    // Описание совместимости и назначения модуля.
+    // Приватный режим или переполненное хранилище не должны блокировать игру.
   }
 }

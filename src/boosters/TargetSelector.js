@@ -1,7 +1,9 @@
+import { elementRules } from '../entities/obstacles/rules.js';
+
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @returns Результат выполнения операции.
+ * Выбирает цвет незавершённой цели, затем — наиболее частый цвет на поле.
+ * @param {import("../core/Game.js").Game} game
+ * @returns {number} Индекс цвета в палитре уровня.
  */
 export function bestColor(game) {
   const counts = Array(game.level.colors).fill(0);
@@ -13,17 +15,25 @@ export function bestColor(game) {
 }
 
 /**
- * Описание операции или проверяемого поведения.
- * @param {import("../core/Game.js").Game} game - Параметр операции.
- * @param {Set<number>} [exclude] - Параметр операции.
- * @returns Результат выполнения операции.
+ * Выбирает доступную для прямого удара цель: сначала незавершённые цели уровня,
+ * затем ящики и бустеры. Уже задетые клетки исключаются для следующих самолётов волны.
+ * @param {import("../core/Game.js").Game} game
+ * @param {Set<number>} [exclude]
+ * @returns {number} Индекс мишени или -1, если подходящих клеток нет.
  */
 export function target(game, exclude = new Set()) {
   let best = -1,
     rank = -Infinity;
   for (let index = 0; index < game.board.length; index++) {
     const piece = game.board[index];
-    if (!piece || exclude.has(index) || piece.type === 'blocker') continue;
+    if (!piece || exclude.has(index)) continue;
+    // Самолёт наносит прямой удар без цвета матча. Правило ящика определяет,
+    // будет ли попадание полезным, в том числе для зарегистрированных расширений.
+    if (
+      piece.kind === 'box' &&
+      !elementRules.get(piece.type)?.canDamage(piece, { direct: true, colors: new Set() })
+    )
+      continue;
     const keys =
       piece.kind === 'gem'
         ? [`color:${piece.color}`]
@@ -32,15 +42,11 @@ export function target(game, exclude = new Set()) {
           : ['booster', `booster:${piece.type}`];
     let value = keys.some(
       /**
-       * Описание операции или проверяемого поведения.
-       * @param {string} key - Параметр операции.
-       * @returns Результат выполнения операции.
+       * @param {string} key
        */ (key) =>
         game.level.goals.some(
           /**
-           * Описание операции или проверяемого поведения.
-           * @param {import("../types.js").GoalConfig} goal - Параметр операции.
-           * @returns Результат выполнения операции.
+           * @param {import("../types.js").GoalConfig} goal
            */ (goal) => goal.key === key && game.remaining(goal) > 0,
         ),
     )

@@ -6,16 +6,16 @@ import { animateElement } from '../src/ui/motion.js';
 globalThis.matchMedia = () => ({ matches: false });
 
 /** Создаёт управляемую цель Web Animations для проверки порядка событий.
- * @returns Результат выполнения операции.
+ * @returns {Object}
  */
 function visual() {
   return {
     style: {},
     calls: [],
     /** Записывает ключевые кадры и удерживает завершение до разрешения тестом.
-     * @param {Keyframe[]} frames - Параметр операции.
-     * @param {Object} options - Параметр операции.
-     * @returns Результат выполнения операции.
+     * @param {Keyframe[]} frames
+     * @param {Object} options
+     * @returns {Object}
      */
     animate(frames, options) {
       let finish;
@@ -29,7 +29,7 @@ function visual() {
 }
 
 /** Даёт текущей цепочке ожидающих обещаний отображения продвинуться.
- * @returns Результат выполнения операции.
+ * @returns {Promise<void>}
  */
 async function flush() {
   for (let step = 0; step < 12; step++) await Promise.resolve();
@@ -160,8 +160,8 @@ test('board rendering uses only transform positions so gravity cannot double the
 test('results automatically advance or retry, and an early button press cannot transition twice', async () => {
   const { GameController } = await import('../src/ui/controller.js');
   /** Создаёт минимальную сессию диалога результата без зависимости от браузера.
-   * @param {'won'|'lost'} status - Параметр операции.
-   * @returns Результат выполнения операции.
+   * @param {'won'|'lost'} status
+   * @returns {Object}
    */
   function session(status) {
     const content = {},
